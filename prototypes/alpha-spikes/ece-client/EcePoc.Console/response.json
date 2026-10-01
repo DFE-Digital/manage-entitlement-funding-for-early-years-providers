@@ -1,0 +1,18 @@
+{
+    "data": {
+        "lastName": "TESTNONE",
+        "dateOfBirth": "2022-06-07",
+        "validityStartDate": "2024-09-01",
+        "validityEndDate": "2024-12-31",
+        "gracePeriodEndDate": "2025-03-31",
+        "eligibilityCode": "91234567891",
+        "nationalInsuranceNumber": "BB123456C",
+        "status": "notEligible",
+        "created": "2026-08-11T11: 08: 43.0704871"
+    },
+    "links": {
+        "get_EligibilityCheck": "/check/765fe0b8-41f4-44d4-a766-2d12ec7991de",
+        "put_EligibilityCheckProcess": "/engine/process/765fe0b8-41f4-44d4-a766-2d12ec7991de",
+        "get_EligibilityCheckStatus": "/check/765fe0b8-41f4-44d4-a766-2d12ec7991de/Status"
+    }
+}
