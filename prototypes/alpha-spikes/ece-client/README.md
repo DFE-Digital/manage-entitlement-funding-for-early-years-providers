@@ -23,6 +23,8 @@ or
 dotnet run -- 2y 2022-06-07 Williams NN124578A
 ```
 
+(These correspond to records in the ECE test system's data set.)
+
 For development, it is recommended that you put your credentials for the ECE API into secrets. This
 can be done on the command line, from the folder containing the `*.csproj` file. The project file
 is already set up with a secrets ID, so you should not need to initialise the secrets feature for
