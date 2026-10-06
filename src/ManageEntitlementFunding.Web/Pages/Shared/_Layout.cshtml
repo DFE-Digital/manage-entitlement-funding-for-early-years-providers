@@ -1,0 +1,52 @@
+﻿<!DOCTYPE html>
+<html lang="en" class="govuk-template">
+<head>
+    <meta charset="utf-8" />
+    <title>@ViewData["Title"] - Manage entitlement funding for early years providers - GOV.UK</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit-no">
+
+    <!-- GOV.UK Icons and Favicons -->
+    <link rel="shortcut icon" sizes="16x16 32x32 48x48" href="~/assets/images/favicon.ico" type="image/x-icon">
+    <link rel="mask-icon" href="~/assets/images/govuk-icon-mask.svg" color="#0b0c0c">
+    <link rel="apple-touch-icon" sizes="180x180" href="~/assets/images/govuk-icon-180.png">
+    <link rel="apple-touch-icon" sizes="167x167" href="~/assets/images/govuk-icon-167.png">
+    <link rel="apple-touch-icon" sizes="152x152" href="~/assets/images/govuk-icon-152.png">
+    <link rel="apple-touch-icon" href="~/assets/images/govuk-icon-180.png">
+    
+    <!-- GOV.UK Frontend Styles automatically mapped by UseGovUkFrontend() -->
+    <link rel="stylesheet" href="~/govuk-frontend.min.css" />
+</head>
+<body class="govuk-template__body">
+    <script>document.body.className += ' js-enabled' + ('noModule' in HTMLScriptElement.prototype ? ' govuk-frontend-supported' : '');</script>
+
+    <a href="#main-content" class="govuk-skip-link" data-module="govuk-skip-link">Skip to main content</a>
+
+    <!-- GOV.UK Header -->
+    <govuk-header service-name="Manage entitlement funding for early years providers" service-url="/">
+    </govuk-header>
+
+    <div class="govuk-width-container">
+        <!-- GOV.UK Phase Banner -->
+        <govuk-phase-banner>
+            <govuk-phase-banner-tag>Beta</govuk-phase-banner-tag>
+            This is a new service – your <a class="govuk-link" href="#">feedback</a> will help us to improve it.
+        </govuk-phase-banner>
+
+        <main class="govuk-main-wrapper" id="main-content" role="main">
+            @RenderBody()
+        </main>
+    </div>
+
+    <!-- GOV.UK Footer -->
+    <govuk-footer>
+    </govuk-footer>
+
+    <!-- Progressive JavaScript Enhancement -->
+    <script type="module" src="~/govuk-frontend.min.js"></script>
+    <script type="module">
+        import { initAll } from '/govuk-frontend.min.js'
+        initAll()
+    </script>
+    @await RenderSectionAsync("Scripts", required: false)
+</body>
+</html>
