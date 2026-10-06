@@ -24,7 +24,7 @@ to ensure:
 ## Considered Options
 
 * Option 1: rely on frontend route filtering only. Filter data on the web application
-based on the user's claims, leaving the API engpoints open to any authenticated bearer token.
+based on the user's claims, leaving the API endpoints open to any authenticated bearer token.
 * Option 2: Claim-embedded provider access list. Encode the user's permitted `ProviderId` list
 directly into the JWT claims issued by the Identity Provider during login.
 * Option 3: Two-tier policy authorization via API & custom requirements. Validate user-to-provider
@@ -45,7 +45,7 @@ by evaluating a custom authorisation policy.
   * Every API route containing a provider resource context must enforce authorisation using
   `[Authorize(Policy = "CanAccessProvider")]` or explicit claim/relationship verification.
   * The API extracts the user identifier (`sub`) from the validated JWT Bearer token and
-  checks database/directory mappings before exscuting any business logic or returning provider records.
+  checks database/directory mappings before executing any business logic or returning provider records.
 * Web application navigation and routing
   * When an authenticated user logs into the Web frontend, the application calls `GET /api/providers/my-providers`.
   * If the API returns an empty array `[]`, the web app redirects the user to `/UnlinkedAccountHolding` in
@@ -59,7 +59,7 @@ by evaluating a custom authorisation policy.
 
 ### Aims
 
-* Complete prevention of IDOR vulnerabilities between provider tenants.
+* Complete prevention of Insecure Direct Object Reference (IDOR) vulnerabilities between provider tenants.
 * API endpoints securely isolated and remain protected even if invoked directly outside the Web frontend.
 * Simplified testability: `ProviderAssociationHandler` can be unit tested against mock `ClaimsPrincipal`
 objects without spinning up OIDC workflows.
