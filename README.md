@@ -9,6 +9,7 @@ childcare entitlements.
 ```text
 manage-entitlement-funding-for-early-years-providers/
 ├─ adr/ -- Architecture decision records
+├─ prototypes/ -- Proofs of concept and prototype implementations
 ├─ src/
 ├─ terraform/ - Terraform project used to implement the Azure infrastructure as code.
 ├─ tests/
