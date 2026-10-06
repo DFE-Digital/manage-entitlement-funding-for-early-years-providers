@@ -39,7 +39,7 @@ app.MapControllers();
 // Secure endpoint mapping
 app.MapGet("/api/entitlements", [Authorize(Policy = "RequireLinkedProvider")] () =>
 {
-    return Results.Ok(new[] { "Working Families 2YO", "Universal 3YO" });
+    return Results.Ok(new[] { "Working Families", "Universal 2- and 3-YO" });
 });
 
 
