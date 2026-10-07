@@ -9,7 +9,7 @@ staff across England.
 
 A provider user authenticates via DfE Sign-In (DSI) and receives an OpenID Connect (OIDC)
 identity token containing user claims (such as `sub` / `NameIdentifier`). But a valid login
-alone does not guarantee that the authenticated user has rights to access or modivy data for
+alone does not guarantee that the authenticated user has rights to access or modify data for
 a specific provider (identified by `ProviderId` or `Urn`).
 
 We need to establish a robust tenant isolation strategy across the Web frontend and API backend
