@@ -2,5 +2,5 @@
 
 public record ProviderSummaryDto(
   string ProviderId,
-   string ProviderName,
-    string Urn);
+  string ProviderName,
+  string Urn);
