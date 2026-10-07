@@ -37,6 +37,22 @@ builder.Services.AddHttpClient<ProviderApiClient>(client =>
     client.BaseAddress = new Uri(apiBaseUrl);
 });
 
+var allowedOrigins = builder.Configuration.GetSection("AllowedOrigins").Get<string[]>() ?? [];
+
+builder.Services.AddCors(options =>
+{
+    options.AddPolicy("AllowWebClient", policy =>
+    {
+        if (allowedOrigins.Length > 0)
+        {
+            policy.WithOrigins(allowedOrigins)
+            .AllowAnyHeader()
+            .AllowAnyMethod()
+            .AllowCredentials();
+        }
+    });
+});
+
 // Add services to the container.   
 builder.Services.AddRazorPages();
 
@@ -55,6 +71,7 @@ if (!app.Environment.IsDevelopment())
 app.UseHttpsRedirection();
 
 app.UseRouting();
+app.UseCors("AllowWebClient");
 
 app.UseAuthentication();
 app.UseAuthorization();
