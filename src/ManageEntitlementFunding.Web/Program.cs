@@ -35,6 +35,8 @@ builder.Services.AddHttpClient<ProviderApiClient>(client =>
 {
     var apiBaseUrl = builder.Configuration["ApiBaseUrl"] ?? "https://localhost:7168";
     client.BaseAddress = new Uri(apiBaseUrl);
+
+    client.Timeout = TimeSpan.FromSeconds(10);
 });
 
 var allowedOrigins = builder.Configuration.GetSection("AllowedOrigins").Get<string[]>() ?? [];
