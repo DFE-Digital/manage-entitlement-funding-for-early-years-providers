@@ -3,6 +3,8 @@ using Microsoft.AspNetCore.Authentication.JwtBearer;
 
 var builder = WebApplication.CreateBuilder(args);
 
+builder.Services.AddHttpContextAccessor();
+
 // Authentication
 builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
 .AddJwtBearer(options =>
@@ -35,13 +37,6 @@ app.UseAuthentication();
 app.UseAuthorization();
 
 app.MapControllers();
-
-// Secure endpoint mapping
-app.MapGet("/api/entitlements", [Authorize(Policy = "RequireLinkedProvider")] () =>
-{
-    return Results.Ok(new[] { "Working Families", "Universal 2- and 3-YO" });
-});
-
 
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())

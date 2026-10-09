@@ -3,13 +3,16 @@ using System.Security.Claims;
 
 public class ProviderAssociationRequirement : IAuthorizationRequirement { }
 
-public class ProviderAssociationHandler : AuthorizationHandler<ProviderAssociationRequirement>
+public class ProviderAssociationHandler(IHttpContextAccessor httpContext) : AuthorizationHandler<ProviderAssociationRequirement>
 {
+  // HTTP context accessible so the handler has access to route parameters
+  private readonly IHttpContextAccessor _httpContext = httpContext;
+
   protected override Task HandleRequirementAsync(
     AuthorizationHandlerContext context,
     ProviderAssociationRequirement requirement)
   {
-    var userId = context.User.FindFirst(ClaimTypes.NameIdentifier)?.Value     ?? context.User.FindFirst("sub")?.Value;
+    var userId = context.User.FindFirst(ClaimTypes.NameIdentifier)?.Value ?? context.User.FindFirst("sub")?.Value;
 
     if (string.IsNullOrEmpty(userId))
     {

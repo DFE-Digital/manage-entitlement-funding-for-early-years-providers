@@ -1,4 +1,6 @@
-﻿<!DOCTYPE html>
+﻿@inject Microsoft.AspNetCore.Hosting.IWebHostEnvironment Env
+
+<!DOCTYPE html>
 <html lang="en" class="govuk-template">
 <head>
     <meta charset="utf-8" />
@@ -32,6 +34,22 @@
             This is a new service – your <a class="govuk-link" href="#">feedback</a> will help us to improve it.
         </govuk-phase-banner>
 
+        @* Render Dev User Status & Logout Button only in Development *@
+@* Compact Dev Session Toolbar *@
+        @if (Env.IsDevelopment() && User.Identity?.IsAuthenticated == true)
+        {
+            <div class="govuk-body-s govuk-!-margin-top-2 govuk-!-margin-bottom-4" style="background-color: #f3f2f1; padding: 6px 12px; border-left: 4px solid #1d70b8; display: flex; justify-content: space-between; align-items: center;">
+                <span>
+                    <strong>DEV SESSION:</strong> Signed in as <strong>@User.FindFirst(System.Security.Claims.ClaimTypes.Name)?.Value</strong> (@User.FindFirst("sub")?.Value)
+                </span>
+                <form method="post" asp-page="/DevLogin" asp-page-handler="Logout" style="margin: 0;">
+                    <button type="submit" class="govuk-link govuk-body-s" style="background: none; border: none; padding: 0; text-decoration: underline; cursor: pointer; color: #1d70b8;">
+                        Dev Sign out
+                    </button>
+                </form>
+            </div>
+        }
+        
         <main class="govuk-main-wrapper" id="main-content" role="main">
             @RenderBody()
         </main>

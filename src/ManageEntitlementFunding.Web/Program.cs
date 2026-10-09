@@ -5,31 +5,7 @@ using ManageEntitlementFunding.Web.Services;
 
 var builder = WebApplication.CreateBuilder(args);
 
-builder.Services.AddAuthentication(options =>
-{
-    options.DefaultScheme = CookieAuthenticationDefaults.AuthenticationScheme;
-    options.DefaultChallengeScheme = OpenIdConnectDefaults.AuthenticationScheme;
-})
-.AddCookie(CookieAuthenticationDefaults.AuthenticationScheme, options =>
-{
-    options.AccessDeniedPath = "/AccessDenied"; // holding page for unlinked user identities
-})
-.AddOpenIdConnect(OpenIdConnectDefaults.AuthenticationScheme, options =>
-{
-    options.Authority = builder.Configuration["DfESignIn:Authority"];
-    options.ClientId = builder.Configuration["DfESignIn:ClientId"];
-    options.ClientSecret = builder.Configuration["DfESignIn:ClientSecret"];
-    options.ResponseType = "code";
-
-    // For consistency with other services that use DfE Sign-in
-    options.CallbackPath = "/auth/cb";
-
-    options.SaveTokens = true; // saves access_token in authentication session
-    options.Scope.Add("openid");
-    options.Scope.Add("profile");
-    options.Scope.Add("email");
-    options.Scope.Add("organisation");
-});
+ConfigureAuthentication(builder);
 
 builder.Services.AddHttpClient<ProviderApiClient>(client =>
 {
@@ -56,7 +32,15 @@ builder.Services.AddCors(options =>
 });
 
 // Add services to the container.   
-builder.Services.AddRazorPages();
+builder.Services.AddRazorPages(options =>
+{
+    options.Conventions.AuthorizeFolder("/");
+});
+
+builder.Services.AddAntiforgery(options =>
+{
+    options.HeaderName = "X-XSRF-TOKEN";
+});
 
 builder.Services.AddGovUkFrontend();
 
@@ -83,7 +67,7 @@ app.UseGovUkFrontend();
 app.UseStaticFiles();
 
 // Map root favicon requests to the GDS asset location
-app.MapGet("/fiavicon.ico", async context =>
+app.MapGet("/favicon.ico", async context =>
 {
     context.Response.Redirect("/assets/images/favicon.ico", permanent: true);
 });
@@ -93,3 +77,46 @@ app.MapRazorPages()
    .WithStaticAssets();
 
 app.Run();
+
+static void ConfigureAuthentication(WebApplicationBuilder builder)
+{
+    var isDsiConfigured = !string.IsNullOrEmpty(builder.Configuration["DfESignIn:Authority"]);
+
+    if (!isDsiConfigured && !builder.Environment.IsDevelopment())
+    {
+        throw new ApplicationException("DfE Sign-In must be configured for non-development environments.");
+    }
+
+    var authBuilder = builder.Services.AddAuthentication(options =>
+    {
+        options.DefaultScheme = CookieAuthenticationDefaults.AuthenticationScheme;
+        options.DefaultChallengeScheme = isDsiConfigured
+        ? OpenIdConnectDefaults.AuthenticationScheme
+        : CookieAuthenticationDefaults.AuthenticationScheme;
+    })
+    .AddCookie(CookieAuthenticationDefaults.AuthenticationScheme, options =>
+    {
+        options.LoginPath = isDsiConfigured ? "/Dashboard" : "/DevLogin";
+        options.AccessDeniedPath = "/UnlinkedAccountHolding"; // holding page for unlinked user identities
+    });
+
+    if (isDsiConfigured)
+    {
+        authBuilder.AddOpenIdConnect(OpenIdConnectDefaults.AuthenticationScheme, options =>
+        {
+            options.Authority = builder.Configuration["DfESignIn:Authority"];
+            options.ClientId = builder.Configuration["DfESignIn:ClientId"];
+            options.ClientSecret = builder.Configuration["DfESignIn:ClientSecret"];
+            options.ResponseType = "code";
+
+            // For consistency with other services that use DfE Sign-in
+            options.CallbackPath = "/auth/cb";
+
+            options.SaveTokens = true; // saves access_token in authentication session
+            options.Scope.Add("openid");
+            options.Scope.Add("profile");
+            options.Scope.Add("email");
+            options.Scope.Add("organisation");
+        });
+    }
+}
