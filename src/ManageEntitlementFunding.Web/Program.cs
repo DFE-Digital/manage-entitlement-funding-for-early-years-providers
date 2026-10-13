@@ -7,13 +7,19 @@ var builder = WebApplication.CreateBuilder(args);
 
 ConfigureAuthentication(builder);
 
+builder.Services.AddHttpContextAccessor();
+builder.Services.AddTransient<AuthHandler>();
+
 builder.Services.AddHttpClient<ProviderApiClient>(client =>
 {
     var apiBaseUrl = builder.Configuration["ApiBaseUrl"] ?? "https://localhost:7168";
     client.BaseAddress = new Uri(apiBaseUrl);
 
-    client.Timeout = TimeSpan.FromSeconds(10);
-});
+    client.Timeout = builder.Environment.IsDevelopment()
+    ? Timeout.InfiniteTimeSpan // helps with debugging!
+    : TimeSpan.FromSeconds(10);
+})
+.AddHttpMessageHandler<AuthHandler>();
 
 var allowedOrigins = builder.Configuration.GetSection("AllowedOrigins").Get<string[]>() ?? [];
 

@@ -7,7 +7,7 @@ using Microsoft.AspNetCore.Mvc;
 namespace ManageEntitlementFunding.Api.Controllers;
 
 [ApiController]
-[Route("api/providers")]
+[Route("/api/providers")]
 [Authorize] // Enforces JWT Bearer authentication across all actions in this controller
 public class ProvidersController : ControllerBase
 {
@@ -21,7 +21,7 @@ public class ProvidersController : ControllerBase
   [HttpGet("my-providers")]
   [ProducesResponseType(typeof(IEnumerable<ProviderSummaryDto>), StatusCodes.Status200OK)]
   [ProducesResponseType(StatusCodes.Status401Unauthorized)]
-  public IActionResult GetMyProviders()
+  public async Task<IActionResult> GetMyProviders(CancellationToken cancellationToken)
   {
     // Extract DfE Sign-In user identifier from claims
     var userId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value
@@ -33,9 +33,16 @@ public class ProvidersController : ControllerBase
     }
 
     // STUB: Always returns an empty array until persistence logic is integrated
-    var providers = Array.Empty<ProviderSummaryDto>();
+    var providers = await GetProvidersForUserAsync(userId, cancellationToken);
 
     return Ok(providers);
+  }
+
+  private static Task<IEnumerable<ProviderSummaryDto>> GetProvidersForUserAsync(string userId, CancellationToken cancellationToken)
+  {
+    var providers = Array.Empty<ProviderSummaryDto>();
+
+    return Task.FromResult<IEnumerable<ProviderSummaryDto>>(providers);
   }
 }
 
