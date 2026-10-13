@@ -53,3 +53,35 @@ dotnet dev-certs https --trust
 ```
 
 (...but see [ADR-0015](./adr/0015-containerisation-base-images.md) about an implication for containerisation security.)
+
+Also, in developmnent only, it is possible to set up a symmetric signing key for dummy tokens to avoid having to rely
+on DfE Sign-In. This key should live in your project's secrets.
+
+To generate the key, from a Terminal:
+
+```shell
+[Convert]::ToBase64String(
+  [System.Security.Cryptography.RandomNumberGenerator]::GetBytes(32)
+)
+```
+
+The output will be a string of characters. Copy this.
+
+To add this to user secrets in the API project:
+
+```shell
+cd src/ManageEntitlementFunding.Api
+
+dotnet user-secrets set "DevelopmentJwt:SigningKey" "your-generated-key"
+```
+
+And to add it to user secrets in the Web project:
+
+```shell
+cd src/ManageEntitlementFunding.Web
+
+dotnet user-secrets set "DevelopmentJwt:SigningKey" "your-generated-key"
+```
+
+This will set the secret ready to be used for local authentication in development, with no risk of leaking real secrets
+or accidentally providing a back door in production.

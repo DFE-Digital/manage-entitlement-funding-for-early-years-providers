@@ -1,4 +1,5 @@
 using System.IdentityModel.Tokens.Jwt;
+using System.Text;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
 
@@ -19,16 +20,23 @@ builder.Services.AddAuthentication(options =>
 {
     if (builder.Environment.IsDevelopment())
     {
+        var signingKey = builder.Configuration["DevelopmentJwt:SigningKey"]
+        ?? throw new InvalidOperationException("Development JTW signing key not configured");
+
         options.RequireHttpsMetadata = false;
-        options.TokenValidationParameters = new TokenValidationParameters
-        {
-            ValidateIssuer = false,
-            ValidateAudience = false,
-            ValidateLifetime = false,
-            ValidateIssuerSigningKey = false,
-            RequireSignedTokens = false, // Critical for alg:none dev tokens
-            SignatureValidator = (token, parameters) => new JwtSecurityToken(token)
-        };
+
+        options.TokenValidationParameters =
+            new TokenValidationParameters
+            {
+                ValidateIssuer = false,
+                ValidateAudience = false,
+
+                ValidateLifetime = true,
+
+                ValidateIssuerSigningKey = true,
+
+                IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(signingKey))
+            };
     }
     else
     {
@@ -36,6 +44,20 @@ builder.Services.AddAuthentication(options =>
         options.Audience = builder.Configuration["DfESignIn:ClientId"];
         options.RequireHttpsMetadata = true;
     }
+
+    options.Events = new JwtBearerEvents
+    {
+        OnAuthenticationFailed = ctx =>
+        {
+            Console.WriteLine($"AUTH FAILED: {ctx.Exception}");
+            return Task.CompletedTask;
+        },
+        OnTokenValidated = ctx =>
+        {
+            Console.WriteLine($"AUTH OK: {ctx.Principal?.Identity?.Name}");
+            return Task.CompletedTask;
+        }
+    };
 });
 
 builder.Services.AddControllers();

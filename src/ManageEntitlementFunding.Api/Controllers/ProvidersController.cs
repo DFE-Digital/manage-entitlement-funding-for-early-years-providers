@@ -1,6 +1,7 @@
 // ManageEntitlementFunding.Api/Controllers/ProvidersController.cs
 using System.Security.Claims;
 using ManageEntitlementFunding.Domain.DataTransfer;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
@@ -8,7 +9,7 @@ namespace ManageEntitlementFunding.Api.Controllers;
 
 [ApiController]
 [Route("/api/providers")]
-[Authorize] // Enforces JWT Bearer authentication across all actions in this controller
+[Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)] // Enforces JWT Bearer authentication across all actions in this controller
 public class ProvidersController : ControllerBase
 {
   /// <summary>

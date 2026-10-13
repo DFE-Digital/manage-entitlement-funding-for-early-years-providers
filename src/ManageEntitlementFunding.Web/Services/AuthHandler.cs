@@ -1,15 +1,34 @@
 namespace ManageEntitlementFunding.Web.Services;
 
+using System.IdentityModel.Tokens.Jwt;
 using System.Net.Http.Headers;
 using System.Security.Claims;
+using System.Text;
 
-public class AuthHandler(IHttpContextAccessor httpContextAccessor) : DelegatingHandler
+using Microsoft.IdentityModel.Tokens;
+
+public class AuthHandler(
+  IHttpContextAccessor httpContextAccessor,
+  IConfiguration configuration,
+  IWebHostEnvironment env) : DelegatingHandler
 {
   private readonly IHttpContextAccessor _httpContextAccessor = httpContextAccessor;
+  private readonly IConfiguration _configuration = configuration;
+  private readonly IWebHostEnvironment _env = env;
 
   protected override async Task<HttpResponseMessage> SendAsync(
-      HttpRequestMessage request,
-      CancellationToken cancellationToken)
+HttpRequestMessage request,
+CancellationToken cancellationToken)
+  {
+    if (!_env.IsDevelopment())
+    {
+      return await base.SendAsync(request, cancellationToken);
+    }
+
+    return await PropagateDevelopmentToken(request, cancellationToken);
+  }
+
+  private async Task<HttpResponseMessage> PropagateDevelopmentToken(HttpRequestMessage request, CancellationToken cancellationToken)
   {
     var httpContext = _httpContextAccessor.HttpContext;
 
@@ -20,7 +39,10 @@ public class AuthHandler(IHttpContextAccessor httpContextAccessor) : DelegatingH
 
       if (!string.IsNullOrEmpty(userId))
       {
-        var devToken = CreateMockJwt(userId);
+        var devToken = CreateDevelopmentJwt(
+          userId,
+          _configuration["DevelopmentJwt:SigningKey"]!);
+
         request.Headers.Authorization = new AuthenticationHeaderValue("Bearer", devToken);
       }
     }
@@ -28,18 +50,23 @@ public class AuthHandler(IHttpContextAccessor httpContextAccessor) : DelegatingH
     return await base.SendAsync(request, cancellationToken);
   }
 
-  private static string CreateMockJwt(string userId)
+  private static string CreateDevelopmentJwt(
+  string userId,
+  string signingKey)
   {
-    // {"alg":"none","typ":"JWT"}
-    const string header = "eyJhbGciOiJub25lIiwidHlwIjoiSldUIn0";
+    var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(signingKey));
 
-    var payloadJson = $"{{\"sub\":\"{userId}\",\"http://schemas.xmlsoap.org/ws/2005/05/identity/claims/nameidentifier\":\"{userId}\"}}";
+    var credentials = new SigningCredentials(key, SecurityAlgorithms.HmacSha256);
 
-    var payload = Convert.ToBase64String(System.Text.Encoding.UTF8.GetBytes(payloadJson))
-        .TrimEnd('=')
-        .Replace('+', '-')
-        .Replace('/', '_');
+    var token = new JwtSecurityToken(
+      claims:
+      [
+        new Claim("sub", userId),
+        new Claim(ClaimTypes.NameIdentifier, userId)
+      ],
+      expires: DateTime.UtcNow.AddHours(1),
+      signingCredentials: credentials);
 
-    return $"{header}.{payload}.";
+    return new JwtSecurityTokenHandler().WriteToken(token);
   }
 }
