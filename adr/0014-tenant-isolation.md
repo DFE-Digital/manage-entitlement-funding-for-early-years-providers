@@ -43,7 +43,8 @@ by evaluating a custom authorisation policy.
 
 * Explicit API enforcement
   * Every API route containing a provider resource context must enforce authorisation using
-  `[Authorize(Policy = "CanAccessProvider")]` or explicit claim/relationship verification.
+  `[Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]` or explicit
+  claim/relationship verification.
   * The API extracts the user identifier (`sub`) from the validated JWT Bearer token and
   checks database/directory mappings before executing any business logic or returning provider records.
 * Web application navigation and routing
@@ -61,7 +62,7 @@ by evaluating a custom authorisation policy.
 
 * Complete prevention of Insecure Direct Object Reference (IDOR) vulnerabilities between provider tenants.
 * API endpoints securely isolated and remain protected even if invoked directly outside the Web frontend.
-* Simplified testability: `ProviderAssociationHandler` can be unit tested against mock `ClaimsPrincipal`
+* Simplified testability: data access methods can be unit tested against mock `ClaimsPrincipal`
 objects without spinning up OIDC workflows.
 
 This is considered worth the extra initial API call (`GET /api/providers/my-providers`) on session launch.
