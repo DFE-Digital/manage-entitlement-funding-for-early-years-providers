@@ -17,7 +17,7 @@ to ensure:
 
 * Users can only read and mutate data belonging to providers they are explicitly authorised to manage.
 * Cross-tenant data leakage is prevented at both the application edge (web client) and the service boundary (API).
-* Local development and authomated testing can exercise authorization rules cleanly without relying on external infrastructure.
+* Local development and automated testing can exercise authorization rules cleanly without relying on external infrastructure.
 
 ## Decision Drivers
 
