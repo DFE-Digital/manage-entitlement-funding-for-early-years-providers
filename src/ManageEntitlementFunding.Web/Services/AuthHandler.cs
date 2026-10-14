@@ -17,8 +17,8 @@ public class AuthHandler(
   private readonly IWebHostEnvironment _env = env;
 
   protected override async Task<HttpResponseMessage> SendAsync(
-HttpRequestMessage request,
-CancellationToken cancellationToken)
+    HttpRequestMessage request,
+    CancellationToken cancellationToken)
   {
     if (!_env.IsDevelopment())
     {
@@ -28,7 +28,9 @@ CancellationToken cancellationToken)
     return await PropagateDevelopmentToken(request, cancellationToken);
   }
 
-  private async Task<HttpResponseMessage> PropagateDevelopmentToken(HttpRequestMessage request, CancellationToken cancellationToken)
+  private async Task<HttpResponseMessage> PropagateDevelopmentToken(
+    HttpRequestMessage request,
+     CancellationToken cancellationToken)
   {
     var httpContext = _httpContextAccessor.HttpContext;
 
