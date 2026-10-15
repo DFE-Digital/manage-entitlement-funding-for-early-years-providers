@@ -2,7 +2,7 @@ namespace ManageEntitlementFunding.Application.Providers.GetProvider;
 
 public interface IGetProviderQueryHandler
 {
-    Task<ProviderDto?> HandleAsync(
+    Task<ProviderDetails?> HandleAsync(
         GetProviderQuery query,
         CancellationToken cancellationToken);
 }

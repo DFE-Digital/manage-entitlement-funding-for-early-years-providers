@@ -1,6 +1,6 @@
 ﻿namespace ManageEntitlementFunding.Application.Providers;
 
-public record ProviderDto(
+public record ProviderDetails(
   Guid ProviderId,
   string ProviderName,
   string Urn);

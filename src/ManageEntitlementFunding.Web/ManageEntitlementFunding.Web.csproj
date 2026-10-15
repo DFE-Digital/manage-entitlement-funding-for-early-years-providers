@@ -13,7 +13,8 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\ManageEntitlementFunding.Domain\ManageEntitlementFunding.Domain.csproj" />
+    <ProjectReference
+      Include="..\ManageEntitlementFunding.Contracts\ManageEntitlementFunding.Contracts.csproj" />
   </ItemGroup>
 
 </Project>

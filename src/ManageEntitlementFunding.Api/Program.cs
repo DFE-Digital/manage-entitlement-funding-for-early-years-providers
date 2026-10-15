@@ -21,7 +21,7 @@ builder.Services.AddAuthentication(options =>
     if (builder.Environment.IsDevelopment())
     {
         var signingKey = builder.Configuration["DevelopmentJwt:SigningKey"]
-        ?? throw new InvalidOperationException("Development JTW signing key not configured");
+                ?? throw new InvalidOperationException("Development JWT signing key not configured");
 
         options.RequireHttpsMetadata = false;
 
@@ -44,20 +44,6 @@ builder.Services.AddAuthentication(options =>
         options.Audience = builder.Configuration["DfESignIn:ClientId"];
         options.RequireHttpsMetadata = true;
     }
-
-    options.Events = new JwtBearerEvents
-    {
-        OnAuthenticationFailed = ctx =>
-        {
-            Console.WriteLine($"AUTH FAILED: {ctx.Exception}");
-            return Task.CompletedTask;
-        },
-        OnTokenValidated = ctx =>
-        {
-            Console.WriteLine($"AUTH OK: {ctx.Principal?.Identity?.Name}");
-            return Task.CompletedTask;
-        }
-    };
 });
 
 builder.Services.SetUpApplication();

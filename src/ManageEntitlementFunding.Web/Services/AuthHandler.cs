@@ -41,9 +41,10 @@ public class AuthHandler(
 
       if (!string.IsNullOrEmpty(userId))
       {
-        var devToken = CreateDevelopmentJwt(
-          userId,
-          _configuration["DevelopmentJwt:SigningKey"]!);
+        string signingKey = _configuration["DevelopmentJwt:SigningKey"]
+              ?? throw new InvalidOperationException("Development JWT signing key is not configured.");
+
+        var devToken = CreateDevelopmentJwt(userId, signingKey!);
 
         request.Headers.Authorization = new AuthenticationHeaderValue("Bearer", devToken);
       }

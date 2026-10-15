@@ -14,6 +14,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\ManageEntitlementFunding.Application\ManageEntitlementFunding.Application.csproj" />
+    <ProjectReference Include="..\ManageEntitlementFunding.Contracts\ManageEntitlementFunding.Contracts.csproj" />
     <ProjectReference Include="..\ManageEntitlementFunding.Domain\ManageEntitlementFunding.Domain.csproj" />
   </ItemGroup>
 

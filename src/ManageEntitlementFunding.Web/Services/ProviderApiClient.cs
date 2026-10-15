@@ -1,4 +1,5 @@
-using ManageEntitlementFunding.Domain.DataTransfer;
+using ManageEntitlementFunding.Contracts.Providers;
+using Microsoft.AspNetCore.Http.HttpResults;
 
 namespace ManageEntitlementFunding.Web.Services;
 
@@ -6,16 +7,17 @@ public class ProviderApiClient(HttpClient httpClient)
 {
   private readonly HttpClient _httpClient = httpClient;
 
-  public async Task<IEnumerable<ProviderSummaryDto>> GetUserProvidersAsync(CancellationToken ct = default)
+  public async Task<IEnumerable<ProviderDetailsResponse>> GetUserProvidersAsync(
+    CancellationToken cancellationToken = default)
   {
-    try
-    {
-      var response = await _httpClient.GetFromJsonAsync<IEnumerable<ProviderSummaryDto>>("/api/providers/my-providers", ct);
-      return response ?? [];
-    }
-    catch (HttpRequestException ex) when (ex.StatusCode == System.Net.HttpStatusCode.Unauthorized)
-    {
-      return [];
-    }
+    var response = await _httpClient.GetFromJsonAsync<IEnumerable<ProviderDetailsResponse>>("/api/providers/my-providers", cancellationToken);
+    return response ?? [];
+  }
+
+  public async Task<ProviderDetailsResponse?> GetProviderAsync(
+    Guid providerId,
+    CancellationToken cancellationToken = default)
+  {
+    return await _httpClient.GetFromJsonAsync<ProviderDetailsResponse?>($"/api/providers/{providerId}", cancellationToken);
   }
 }

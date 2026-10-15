@@ -6,4 +6,9 @@
     <Nullable>enable</Nullable>
   </PropertyGroup>
 
+  <ItemGroup>
+    <ProjectReference
+      Include="..\ManageEntitlementFunding.Domain\ManageEntitlementFunding.Domain.csproj" />
+  </ItemGroup>
+
 </Project>
