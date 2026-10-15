@@ -22,6 +22,7 @@ public class AuthHandler(
   {
     if (!_env.IsDevelopment())
     {
+      // TODO: when OIDC is properly hooked up, this will need to read the token from session and set it as Bearer token on the request
       return await base.SendAsync(request, cancellationToken);
     }
 
