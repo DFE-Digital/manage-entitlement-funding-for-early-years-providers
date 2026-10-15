@@ -1,0 +1,8 @@
+<Solution>
+  <Project Path="src/ManageEntitlementFunding.Api/ManageEntitlementFunding.Api.csproj" />
+  <Project
+    Path="src/ManageEntitlementFunding.Application/ManageEntitlementFunding.Application.csproj" />
+  <Project Path="src/ManageEntitlementFunding.Contracts/ManageEntitlementFunding.Contracts.csproj" />
+  <Project Path="src/ManageEntitlementFunding.Domain/ManageEntitlementFunding.Domain.csproj" />
+  <Project Path="src/ManageEntitlementFunding.Web/ManageEntitlementFunding.Web.csproj" />
+</Solution>

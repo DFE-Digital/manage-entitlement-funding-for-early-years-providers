@@ -5,9 +5,9 @@
       "name": "Debug API",
       "type": "coreclr",
       "request": "launch",
-      "program": "${workspaceFolder}/ManageEntitlementFunding.Api/bin/Debug/net10.0/ManageEntitlementFunding.Api.dll",
+      "program": "${workspaceFolder}/src/ManageEntitlementFunding.Api/bin/Debug/net10.0/ManageEntitlementFunding.Api.dll",
       "args": [],
-      "cwd": "${workspaceFolder}/ManageEntitlementFunding.Api",
+      "cwd": "${workspaceFolder}/src/ManageEntitlementFunding.Api",
       "stopAtEntry": false,
       "env": {
         "ASPNETCORE_ENVIRONMENT": "Development"
@@ -17,9 +17,9 @@
       "name": "Debug Web",
       "type": "coreclr",
       "request": "launch",
-      "program": "${workspaceFolder}/ManageEntitlementFunding.Web/bin/Debug/net10.0/ManageEntitlementFunding.Web.dll",
+      "program": "${workspaceFolder}/src/ManageEntitlementFunding.Web/bin/Debug/net10.0/ManageEntitlementFunding.Web.dll",
       "args": [],
-      "cwd": "${workspaceFolder}/ManageEntitlementFunding.Web",
+      "cwd": "${workspaceFolder}/src/ManageEntitlementFunding.Web",
       "stopAtEntry": false,
       "serverReadyAction": {
         "action": "openExternally",
@@ -34,7 +34,10 @@
   "compounds": [
     {
       "name": "Launch Both (API + Web)",
-      "configurations": ["Debug API", "Debug Web"],
+      "configurations": [
+        "Debug API",
+        "Debug Web"
+      ],
       "preLaunchTask": "build",
       "stopAll": true
     }

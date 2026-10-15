@@ -17,11 +17,9 @@ manage-entitlement-funding-for-early-years-providers/
 
 ## Development set-up
 
-Clone the repository. The solution file is in the `src` folder. (This may change -- when
-we start adding unit tests in the `/tests` folder, it may make more sense for it to be
-in the root folder.)
+Clone the repository. The solution file is in the repository root folder.
 
-In the `src` folder open the IDE. (VS Code will work. Extensions are recommended for working
+In the root folder open the IDE. (VS Code will work. Extensions are recommended for working
 with this repository: C#, C# Dev Kit, GitHub Actions, HashiCorp Terraform, Red Hat XML, Red
 Hat YAML, David Anson's markdownlint.)
 
