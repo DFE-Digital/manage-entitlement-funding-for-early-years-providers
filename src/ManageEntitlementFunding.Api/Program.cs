@@ -60,6 +60,8 @@ builder.Services.AddAuthentication(options =>
     };
 });
 
+builder.Services.SetUpApplication();
+
 builder.Services.AddControllers();
 builder.Services.AddOpenApi();
 

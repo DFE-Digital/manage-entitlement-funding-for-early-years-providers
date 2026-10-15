@@ -1,6 +1,6 @@
 ﻿namespace ManageEntitlementFunding.Domain.DataTransfer;
 
 public record ProviderSummaryDto(
-  string ProviderId,
+  Guid ProviderId,
   string ProviderName,
   string Urn);

@@ -13,6 +13,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\ManageEntitlementFunding.Application\ManageEntitlementFunding.Application.csproj" />
     <ProjectReference Include="..\ManageEntitlementFunding.Domain\ManageEntitlementFunding.Domain.csproj" />
   </ItemGroup>
 
