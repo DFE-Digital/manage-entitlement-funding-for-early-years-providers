@@ -1,68 +1,51 @@
-# ADR-0014: Provider tenant isolation and Authorization Strategy
+# ADR-0014: Enforce provider data isolation at the service boundary
 
 * Status: accepted
 
 ## Context and Problem Statement
 
-The service is a multi-tenant application accessed by early years providers and administrative
-staff across England.
+The service is a multi-tenant application used by people associated with
+early years providers.
 
-A provider user authenticates via DfE Sign-In (DSI) and receives an OpenID Connect (OIDC)
-identity token containing user claims (such as `sub` / `NameIdentifier`). But a valid login
-alone does not guarantee that the authenticated user has rights to access or modify data for
-a specific provider (identified by `ProviderId` or `Urn`).
+Authentication establishes the identity of a user, but does not establish
+that the user is authorised to access data belonging to a particular provider.
 
-We need to establish a robust tenant isolation strategy across the Web frontend and API backend
-to ensure:
+The service must prevent users from reading or modifying data belonging to
+providers with which they do not have an appropriate relationship.
 
-* Users can only read and mutate data belonging to providers they are explicitly authorised to manage.
-* Cross-tenant data leakage is prevented at both the application edge (web client) and the service boundary (API).
-* Local development and automated testing can exercise authorization rules cleanly without relying on external infrastructure.
+Client-side navigation and filtering cannot provide this security boundary
+because API endpoints may be invoked independently of the Web application.
 
-## Decision Drivers
+## Decision
 
-## Considered Options
+Access to provider-scoped data and operations shall be authorised by the API
+using the authenticated user's identity and the relationships relevant to the
+requested operation.
 
-* Option 1: rely on frontend route filtering only. Filter data on the web application
-based on the user's claims, leaving the API endpoints open to any authenticated bearer token.
-* Option 2: Claim-embedded provider access list. Encode the user's permitted `ProviderId` list
-directly into the JWT claims issued by the Identity Provider during login.
-* Option 3: Two-tier policy authorization via API & custom requirements. Validate user-to-provider
-mappings in a centralised backend service using ASP.NET Core authorisation policies
-(`IAuthorizationHandler`), enforcing tenant checks on every API request.
+The Web application may use provider relationships to control navigation and
+user experience, but these controls shall not be relied upon for security.
 
-## Decision Outcome
+Each application operation shall enforce the data-authorisation rules
+appropriate to that operation before disclosing or modifying protected data.
 
-Chosen option: option 3. Two-tier policy authorisation via API and custom requirements.
+Where practical, authorisation constraints should form part of data retrieval,
+rather than retrieving data outside the caller's authorised scope and filtering
+it afterwards.
 
-This approach provides true defence in depth: the Web UI directs users based on their
-associated providers, but the API independently enforces tenant boundaries on every request
-by evaluating a custom authorisation policy.
+The implementation of these rules may vary between application operations.
+This ADR does not mandate a single global provider-access policy or a particular
+persistence mechanism.
 
-### Key operational rules
+## Consequences
 
-* Explicit API enforcement
-  * Every API route containing a provider resource context must enforce authorisation using
-  `[Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]` or explicit
-  claim/relationship verification.
-  * The API extracts the user identifier (`sub`) from the validated JWT Bearer token and
-  checks database/directory mappings before executing any business logic or returning provider records.
-* Web application navigation and routing
-  * When an authenticated user logs into the Web frontend, the application calls `GET /api/providers/my-providers`.
-  * If the API returns an empty array `[]`, the web app redirects the user to `/UnlinkedAccountHolding` in
-  compliance with DfE user journey standards.
-  * If the user attempts to access a provider URL `api/providers/{providerId}` for which they
-  lack entitlement, the API returns `403 Forbidden` and the web app displays the standard
-  GDS `403` Access Denied page.
-* Domain record standardisation
-  * Shared contracts (such as `ProviderSummaryDto`) reside in `ManageEntitlementFunding.Domain.DataTransfer`
-  to ensure a single, consistent schema for provider boundaries across web, API, and test projects.
-
-### Aims
-
-* Complete prevention of Insecure Direct Object Reference (IDOR) vulnerabilities between provider tenants.
-* API endpoints securely isolated and remain protected even if invoked directly outside the Web frontend.
-* Simplified testability: data access methods can be unit tested against mock `ClaimsPrincipal`
-objects without spinning up OIDC workflows.
-
-This is considered worth the extra initial API call (`GET /api/providers/my-providers`) on session launch.
+* Authentication alone does not confer access to provider data.
+* Provider-scoped API operations must enforce their own applicable data
+  authorisation requirements.
+* Direct invocation of the API cannot bypass controls implemented by the Web
+  application.
+* Query and command implementations must be designed so that unauthorised
+  provider data cannot inadvertently be disclosed.
+* Persistence implementations must support efficient enforcement of these
+  data-access boundaries.
+* Automated tests should verify attempts to access resources belonging to
+  providers to which a user is not authorised.
