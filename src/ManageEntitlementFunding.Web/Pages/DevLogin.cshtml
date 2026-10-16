@@ -1,0 +1,42 @@
+@page
+@model ManageEntitlementFunding.Web.Pages.DevLoginModel
+@{
+    ViewData["Title"] = "Development Sign-In";
+}
+
+<div class="govuk-grid-row">
+    <div class="govuk-grid-column-two-thirds">
+        <govuk-warning-text icon-fallback-text="Warning">
+            This local sign-in page is active for development testing only.
+        </govuk-warning-text>
+
+        <h1 class="govuk-heading-l">Simulated DfE Sign-In</h1>
+
+        <form method="post">
+            <div class="govuk-form-group">
+                <label class="govuk-label" for="SubjectId">
+                    Subject ID (sub / NameIdentifier)
+                </label>
+                <input class="govuk-input" id="SubjectId" name="SubjectId" type="text" value="@Model.SubjectId" required />
+            </div>
+
+            <div class="govuk-form-group">
+                <label class="govuk-label" for="Name">
+                    User Full Name
+                </label>
+                <input class="govuk-input" id="Name" name="Name" type="text" value="@Model.Name" required />
+            </div>
+
+            <div class="govuk-form-group">
+                <label class="govuk-label" for="Email">
+                    Email Address
+                </label>
+                <input class="govuk-input" id="Email" name="Email" type="email" value="@Model.Email" required />
+            </div>
+
+            <govuk-button type="submit">
+                Sign in with test identity
+            </govuk-button>
+        </form>
+    </div>
+</div>
