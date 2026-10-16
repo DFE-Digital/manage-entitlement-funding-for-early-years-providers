@@ -1,5 +1,4 @@
 using ManageEntitlementFunding.Contracts.Providers;
-using Microsoft.AspNetCore.Http.HttpResults;
 
 namespace ManageEntitlementFunding.Web.Services;
 

@@ -1,12 +1,12 @@
 // ManageEntitlementFunding.Api/Controllers/ProvidersController.cs
-using System.Security.Claims;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
+
 using ManageEntitlementFunding.Api.Authentication;
 using ManageEntitlementFunding.Application.Providers.GetMyProviders;
 using ManageEntitlementFunding.Application.Providers.GetProvider;
 using ManageEntitlementFunding.Contracts.Providers;
-using Microsoft.AspNetCore.Authentication.JwtBearer;
-using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Mvc;
 
 namespace ManageEntitlementFunding.Api.Controllers;
 

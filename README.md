@@ -81,5 +81,5 @@ cd src/ManageEntitlementFunding.Web
 dotnet user-secrets set "DevelopmentJwt:SigningKey" "your-generated-key"
 ```
 
-This will set the secret ready to be used for local authentication in development, with no risk of leaking real secrets
-or accidentally providing a back door in production.
+This will set the secret ready to be used for local authentication in development, the development
+authentication mechanism is explicitly disabled outside the development environment.
