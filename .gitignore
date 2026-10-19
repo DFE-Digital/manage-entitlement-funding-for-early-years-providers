@@ -349,5 +349,23 @@ MigrationBackup/
 # Ionide (cross platform F# VS Code tools) working folder
 .ionide/
 
+# Exclude Visual Studio and VS Code user state
+.vs/
+.vscode/*
+!.vscode/launch.json
+!.vscode/tasks.json
+!.vscode/extensions.json
+
+# Ignore third-party vendor assets and compiled GDS styles
+ManageEntitlementFunding.Web/wwwroot/lib/
+ManageEntitlementFunding.Web/wwwroot/govuk/
+ManageEntitlementFunding.Web/wwwroot/*.min.css
+ManageEntitlementFunding.Web/wwwroot/*.min.js
+
+# Added to .gitignore per GovUk.Frontend.AspNetCore documentation
+src/ManageEntitlementFunding.Web/wwwroot/assets/
+src/ManageEntitlementFunding.Web/wwwroot/govuk-frontend.min.css
+src/ManageEntitlementFunding.Web/wwwroot/govuk-frontend.min.js
+
 # Repomix output
 **/repomix-output.xml
