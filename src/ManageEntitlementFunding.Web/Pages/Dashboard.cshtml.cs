@@ -1,4 +1,3 @@
-using System.Security.Claims;
 using ManageEntitlementFunding.Web.Services;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;

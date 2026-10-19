@@ -6,10 +6,10 @@ public class ProviderApiClient(HttpClient httpClient)
 {
   private readonly HttpClient _httpClient = httpClient;
 
-  public async Task<IEnumerable<ProviderDetailsResponse>> GetUserProvidersAsync(
+  public async Task<IEnumerable<ProviderSummaryResponse>> GetUserProvidersAsync(
     CancellationToken cancellationToken = default)
   {
-    var response = await _httpClient.GetFromJsonAsync<IEnumerable<ProviderDetailsResponse>>("/api/providers/my-providers", cancellationToken);
+    var response = await _httpClient.GetFromJsonAsync<IEnumerable<ProviderSummaryResponse>>("/api/providers/my-providers", cancellationToken);
     return response ?? [];
   }
 

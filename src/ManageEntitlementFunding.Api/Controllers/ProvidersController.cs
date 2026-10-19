@@ -1,5 +1,3 @@
-// ManageEntitlementFunding.Api/Controllers/ProvidersController.cs
-using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
@@ -12,7 +10,7 @@ namespace ManageEntitlementFunding.Api.Controllers;
 
 [ApiController]
 [Route("/api/providers")]
-[Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)] // Enforces JWT Bearer authentication across all actions in this controller
+[Authorize]
 public class ProvidersController(
   IGetMyProvidersQueryHandler myProvidersQuery,
   IGetProviderQueryHandler providerQuery
@@ -29,7 +27,7 @@ public class ProvidersController(
   /// For those users it will correctly return an empty enumerable.
   /// </remarks>
   [HttpGet("my-providers")]
-  [ProducesResponseType(typeof(IEnumerable<ProviderDetailsResponse>), StatusCodes.Status200OK)]
+  [ProducesResponseType(typeof(IEnumerable<ProviderSummaryResponse>), StatusCodes.Status200OK)]
   [ProducesResponseType(StatusCodes.Status401Unauthorized)]
   public async Task<IActionResult> GetMyProviders(CancellationToken cancellationToken)
   {
@@ -44,11 +42,11 @@ public class ProvidersController(
 
     var providers = await _myProvidersQuery.HandleAsync(query, cancellationToken);
 
-    var providerSummaries = new List<ProviderDetailsResponse>();
+    var providerSummaries = new List<ProviderSummaryResponse>();
 
     foreach (var provider in providers)
     {
-      providerSummaries.Add(new ProviderDetailsResponse(provider.ProviderId, provider.ProviderName, provider.Urn));
+      providerSummaries.Add(new ProviderSummaryResponse(provider.ProviderId, provider.ProviderName, provider.Urn));
     }
 
     return Ok(providerSummaries);

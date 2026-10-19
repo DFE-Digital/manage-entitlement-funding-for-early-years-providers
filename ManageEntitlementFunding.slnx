@@ -1,7 +1,11 @@
 <Solution>
+  <Folder Name="/tests/">
+    <Project Path="tests/ManageEntitlementFunding.Api.Tests/ManageEntitlementFunding.Api.Tests.csproj" />
+    <Project Path="tests/ManageEntitlementFunding.Application.Tests/ManageEntitlementFunding.Application.Tests.csproj" />
+    <Project Path="tests/ManageEntitlementFunding.Web.Tests/ManageEntitlementFunding.Web.Tests.csproj" />
+  </Folder>
   <Project Path="src/ManageEntitlementFunding.Api/ManageEntitlementFunding.Api.csproj" />
-  <Project
-    Path="src/ManageEntitlementFunding.Application/ManageEntitlementFunding.Application.csproj" />
+  <Project Path="src/ManageEntitlementFunding.Application/ManageEntitlementFunding.Application.csproj" />
   <Project Path="src/ManageEntitlementFunding.Contracts/ManageEntitlementFunding.Contracts.csproj" />
   <Project Path="src/ManageEntitlementFunding.Domain/ManageEntitlementFunding.Domain.csproj" />
   <Project Path="src/ManageEntitlementFunding.Web/ManageEntitlementFunding.Web.csproj" />
