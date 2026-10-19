@@ -26,7 +26,7 @@ namespace ManageEntitlementFunding.Api.Tests.Fakes
             var providers = ExistingProviders
                         .Where(p => accessibleIds.Contains(p.ProviderId));
 
-            return Task.FromResult(ExistingProviders.AsEnumerable());
+            return Task.FromResult(providers);
         }
 
         public Task<ProviderDetails?> HandleAsync(

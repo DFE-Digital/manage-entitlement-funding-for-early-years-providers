@@ -52,18 +52,22 @@ namespace ManageEntitlementFunding.Api.Tests.ControllerTests
         {
             await using var factory = new ApiFactory();
 
-            var providerId = Guid.NewGuid();
+            var accessibleProviderId = Guid.NewGuid();
+            var inaccessibleProviderId = Guid.NewGuid();
 
             factory.Providers.ExistingProviders =
             [
-                new ProviderDetails(providerId,
+                new ProviderDetails(accessibleProviderId,
                                     "Test Nursery",
-                                    "123456")
+                                    "123456"),
+                new ProviderDetails(inaccessibleProviderId,
+                                    "Other Nursery",
+                                    "654321")
             ];
 
             var accessDictionary = new Dictionary<string, HashSet<Guid>>
             {
-                { "test-user", new HashSet<Guid>{ providerId} }
+                { "test-user", new HashSet<Guid>{ accessibleProviderId} }
             };
 
             factory.Providers.ProviderAccess = new ReadOnlyDictionary<string, HashSet<Guid>>(accessDictionary);
@@ -86,7 +90,7 @@ namespace ManageEntitlementFunding.Api.Tests.ControllerTests
 
             var provider = providers!.Single();
 
-            Assert.AreEqual(providerId, provider.ProviderId);
+            Assert.AreEqual(accessibleProviderId, provider.ProviderId);
             Assert.AreEqual("Test Nursery", provider.ProviderName);
             Assert.AreEqual("123456", provider.Urn);
         }
@@ -147,12 +151,11 @@ namespace ManageEntitlementFunding.Api.Tests.ControllerTests
                 "X-Test-UserId",
                 "test-user");
 
-            var response = await client.GetAsync(
-                $"/api/providers/{providerId}");
+            var response = await client.GetAsync($"/api/providers/{providerId}");
 
             Assert.AreEqual(HttpStatusCode.OK, response.StatusCode);
 
-            var provider = await client.GetFromJsonAsync<ProviderDetailsResponse?>($"/api/providers/{providerId}", new CancellationToken());
+            var provider = await response.Content.ReadFromJsonAsync<ProviderDetailsResponse>(TestContext.CancellationToken);
 
             Assert.IsNotNull(provider);
             Assert.AreEqual(providerId, provider.ProviderId);
@@ -184,5 +187,7 @@ namespace ManageEntitlementFunding.Api.Tests.ControllerTests
 
             Assert.AreEqual(HttpStatusCode.NotFound, response.StatusCode);
         }
+
+        public TestContext TestContext { get; set; }
     }
 }
