@@ -30,7 +30,7 @@ namespace ManageEntitlementFunding.Api.Tests.Authentication
             var claims = new[]
             {
             new Claim("sub", userId!)
-        };
+            };
 
             var identity = new ClaimsIdentity(
                 claims,
