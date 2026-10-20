@@ -1,0 +1,30 @@
+version: 2
+updates:
+
+  - package-ecosystem: github-actions
+    directory: /
+    cooldown:
+      default-days: 7
+    schedule:
+      interval: 'daily'
+    labels:
+      - github-actions
+      - dependabot
+
+# todo: docker?
+
+  - package-ecosystem: nuget
+    directory: /
+    cooldown:
+      default-days: 7
+    schedule:
+      interval: 'daily'
+    labels:
+      - nuget
+      - dependabot
+    ignore:
+      - dependency-name: FluentAssertions
+        # Ignore versions of FluentAssertions that are equal to or greater than 8.0.0
+        versions: [">=8.0.0"]
+
+# todo: end-to-end testing?
