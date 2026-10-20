@@ -4,6 +4,7 @@
     <DataCollectors>
       <DataCollector friendlyName="XPlat code coverage">
         <Configuration>
+          <Format>cobertura</Format>
           <Exclude>[ManageEntitlementFunding.Web]AspNetCoreGeneratedDocument.*</Exclude>
         </Configuration>
       </DataCollector>

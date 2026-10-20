@@ -10,25 +10,24 @@ runs:
   using: composite
 
   steps:
-    - name: Install dotnet-coverage
-      shell: bash
-      run: dotnet tool install --global dotnet-coverage
-
     - name: Test
       shell: bash
       env:
         SOLUTION_FILENAME: ${{ inputs.solution_filename }}
       run: dotnet test "${SOLUTION_FILENAME}" --no-restore --verbosity normal --collect:"XPlat Code Coverage" --settings "${GITHUB_WORKSPACE}/coverlet.runsettings" --results-directory ./coverage
 
-    - name: Merge Coverage
+    - name: Inspect coverage
       shell: bash
-      run: dotnet-coverage merge ./coverage/*.cobertura.xml --recursive --output ./coverage/merged.cobertura.xml --output-format cobertura
+      run: |
+        find ./coverage -type f -maxdepth 3 -print
+        echo "---- merged coverage ----"
+        head -40 "$(find ./coverage -name 'coverage.cobertura.xml' | head -1)"
 
     - name: Code Coverage Summary Report
       uses: irongut/CodeCoverageSummary@v1.3.0
       if: github.actor != 'dependabot[bot]' # dependabot PRs have issues accessing the resource so skip
       with:
-        filename: coverage/**/merged.cobertura.xml
+        filename: coverage/**/coverage.cobertura.xml
         badge: true
         fail_below_min: true
         format: markdown
@@ -51,7 +50,7 @@ runs:
       uses: danielpalme/ReportGenerator-GitHub-Action@5.3.8
       if: github.actor != 'dependabot[bot]' && github.event_name == 'pull_request'
       with:
-        reports: "coverage/**/merged.cobertura.xml"
+        reports: "coverage/**/coverage.cobertura.xml"
         targetdir: "CoverageReports"
         reporttypes: "Html"
 
