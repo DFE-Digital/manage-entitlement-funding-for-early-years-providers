@@ -19,9 +19,22 @@ runs:
     - name: Inspect coverage
       shell: bash
       run: |
-        find ./coverage -type f -maxdepth 3 -print
-        echo "---- merged coverage ----"
-        head -40 "$(find ./coverage -name 'coverage.cobertura.xml' | head -1)"
+        echo "Working directory:"
+        pwd
+
+        echo "Coverage directory:"
+        ls -la ./coverage || true
+
+        echo "All coverage files:"
+        find ./coverage -type f -print || true
+
+        echo "Merged coverage:"
+        if [ -f ./coverage/merged.cobertura.xml ]; then
+          head -40 ./coverage/merged.cobertura.xml
+        else
+          echo "merged.cobertura.xml DOES NOT EXIST"
+          exit 1
+        fi
 
     - name: Code Coverage Summary Report
       uses: irongut/CodeCoverageSummary@v1.3.0
