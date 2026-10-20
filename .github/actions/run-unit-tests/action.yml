@@ -18,7 +18,7 @@ runs:
       shell: bash
       env:
         SOLUTION_FILENAME: ${{ inputs.solution_filename }}
-      run: dotnet test "${SOLUTION_FILENAME}" --no-restore --verbosity normal --collect:"XPlat Code Coverage" --settings coverlet.runsettings --results-directory ./coverage
+      run: dotnet test "${SOLUTION_FILENAME}" --no-restore --verbosity normal --collect:"XPlat Code Coverage" --settings "${GITHUB_WORKSPACE}/coverlet.runsettings" --results-directory ./coverage
 
     - name: Merge Coverage
       shell: bash
@@ -36,7 +36,7 @@ runs:
         hide_complexity: true
         indicators: true
         output: both
-        thresholds: '90 90'
+        thresholds: "90 90"
 
     - name: Add Coverage PR Comment
       uses: marocchino/sticky-pull-request-comment@v2
@@ -46,22 +46,22 @@ runs:
         path: code-coverage-results.md
         message: |
           Code coverage report
-          
+
     - name: Create Html coverage report
       uses: danielpalme/ReportGenerator-GitHub-Action@5.3.8
       if: github.actor != 'dependabot[bot]' && github.event_name == 'pull_request'
       with:
-        reports: 'coverage/**/merged.cobertura.xml'
-        targetdir: 'CoverageReports'
-        reporttypes: 'Html'
-        
+        reports: "coverage/**/merged.cobertura.xml"
+        targetdir: "CoverageReports"
+        reporttypes: "Html"
+
     - name: Upload coverage reports
       uses: actions/upload-artifact@v4
       if: github.actor != 'dependabot[bot]' && github.event_name == 'pull_request'
       with:
         name: CoverageReports
         path: CoverageReports
-    
+
     - name: Write to Job Summary
       shell: bash
       if: github.actor != 'dependabot[bot]' && github.event_name == 'pull_request'
