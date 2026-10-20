@@ -16,26 +16,6 @@ runs:
         SOLUTION_FILENAME: ${{ inputs.solution_filename }}
       run: dotnet test "${SOLUTION_FILENAME}" --no-restore --verbosity normal --collect:"XPlat Code Coverage" --settings "${GITHUB_WORKSPACE}/coverlet.runsettings" --results-directory ./coverage
 
-    - name: Inspect coverage
-      shell: bash
-      run: |
-        echo "Working directory:"
-        pwd
-
-        echo "Coverage directory:"
-        ls -la ./coverage || true
-
-        echo "All coverage files:"
-        find ./coverage -type f -print || true
-
-        echo "Merged coverage:"
-        if [ -f ./coverage/merged.cobertura.xml ]; then
-          head -40 ./coverage/merged.cobertura.xml
-        else
-          echo "merged.cobertura.xml DOES NOT EXIST"
-          exit 1
-        fi
-
     - name: Code Coverage Summary Report
       uses: irongut/CodeCoverageSummary@v1.3.0
       if: github.actor != 'dependabot[bot]' # dependabot PRs have issues accessing the resource so skip
