@@ -16,6 +16,14 @@ runs:
         SOLUTION_FILENAME: ${{ inputs.solution_filename }}
       run: dotnet test "${SOLUTION_FILENAME}" --no-restore --verbosity normal --collect:"XPlat Code Coverage" --settings "${GITHUB_WORKSPACE}/coverlet.runsettings" --results-directory ./coverage
 
+    - name: Inspect coverage
+      shell: bash
+      run: |
+        for f in coverage/**/coverage.cobertura.xml; do
+          echo "===== $f ====="
+          grep -E '<coverage|<package ' "$f" | head -20
+        done
+
     - name: Code Coverage Summary Report
       uses: irongut/CodeCoverageSummary@v1.3.0
       if: github.actor != 'dependabot[bot]' # dependabot PRs have issues accessing the resource so skip
