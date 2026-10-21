@@ -1,0 +1,69 @@
+name: Run Unit Tests
+description: Runs the unit tests and publishes them to the workflow runs
+
+inputs:
+  solution_filename:
+    required: true
+    type: string
+
+runs:
+  using: composite
+
+  steps:
+    - name: Test
+      shell: bash
+      env:
+        SOLUTION_FILENAME: ${{ inputs.solution_filename }}
+      run: dotnet test "${SOLUTION_FILENAME}" --no-restore --verbosity normal --collect:"XPlat Code Coverage" --settings "${GITHUB_WORKSPACE}/coverlet.runsettings" --results-directory ./coverage
+
+    - name: Inspect coverage
+      shell: bash
+      run: |
+        for f in coverage/**/coverage.cobertura.xml; do
+          echo "===== $f ====="
+          grep -E '<coverage|<package ' "$f" | head -20
+        done
+
+    - name: Code Coverage Summary Report
+      uses: irongut/CodeCoverageSummary@v1.3.0
+      if: github.actor != 'dependabot[bot]' # dependabot PRs have issues accessing the resource so skip
+      with:
+        filename: coverage/**/coverage.cobertura.xml
+        badge: true
+        fail_below_min: true
+        format: markdown
+        hide_branch_rate: false
+        hide_complexity: true
+        indicators: true
+        output: both
+        thresholds: "40 40"
+    # Todo: we will increase these thresholds later, when the initial repository setup is satisfactory
+
+    - name: Add Coverage PR Comment
+      uses: marocchino/sticky-pull-request-comment@v2
+      if: github.actor != 'dependabot[bot]' && github.event_name == 'pull_request'
+      with:
+        recreate: true
+        path: code-coverage-results.md
+        message: |
+          Code coverage report
+
+    - name: Create Html coverage report
+      uses: danielpalme/ReportGenerator-GitHub-Action@5.3.8
+      if: always() && github.actor != 'dependabot[bot]' && github.event_name == 'pull_request'
+      with:
+        reports: "coverage/**/coverage.cobertura.xml"
+        targetdir: "CoverageReports"
+        reporttypes: "Html"
+
+    - name: Upload coverage reports
+      uses: actions/upload-artifact@v4
+      if: always() && github.actor != 'dependabot[bot]' && github.event_name == 'pull_request'
+      with:
+        name: CoverageReports
+        path: CoverageReports
+
+    - name: Write to Job Summary
+      shell: bash
+      if: github.actor != 'dependabot[bot]' && github.event_name == 'pull_request'
+      run: cat code-coverage-results.md >> $GITHUB_STEP_SUMMARY
