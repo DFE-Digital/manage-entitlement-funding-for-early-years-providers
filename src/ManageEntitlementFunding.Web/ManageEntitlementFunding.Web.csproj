@@ -8,13 +8,12 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="GovUk.Frontend.AspNetCore" Version="5.0.0" />
-    <PackageReference Include="Microsoft.AspNetCore.Authentication.OpenIdConnect" Version="10.0.12" />
+    <PackageReference Include="GovUk.Frontend.AspNetCore" Version="5.1.0" />
+    <PackageReference Include="Microsoft.AspNetCore.Authentication.OpenIdConnect" Version="10.0.13" />
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference
-      Include="..\ManageEntitlementFunding.Contracts\ManageEntitlementFunding.Contracts.csproj" />
+    <ProjectReference Include="..\ManageEntitlementFunding.Contracts\ManageEntitlementFunding.Contracts.csproj" />
   </ItemGroup>
 
 </Project>
