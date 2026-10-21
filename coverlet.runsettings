@@ -5,9 +5,14 @@
       <DataCollector friendlyName="XPlat code coverage">
         <Configuration>
           <Format>cobertura</Format>
-          <Exclude>[ManageEntitlementFunding.Web]AspNetCoreGeneratedDocument.*</Exclude>
-        </Configuration>
-      </DataCollector>
+            <Exclude>
+                [ManageEntitlementFunding.Web]AspNetCoreGeneratedDocument.*
+            </Exclude>
+            <ExcludeByFile>
+                **/Microsoft.AspNetCore.OpenApi.SourceGenerators/**/*.cs
+            </ExcludeByFile>
+        </Configuration> 
+     </DataCollector>
     </DataCollectors>
   </DataCollectionRunSettings>
 </RunSettings>
