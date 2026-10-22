@@ -1,0 +1,31 @@
+name: Build DotNet App
+description: Sets up .Net for specified version and builds application
+
+inputs:
+  dotnet_version:
+    required: true
+    type: string
+  solution_filename:
+    required: true
+    type: string
+
+runs:
+  using: composite
+
+  steps:
+    - name: Setup .NET Core SDK ${{ inputs.dotnet_version }}
+      uses: actions/setup-dotnet@v6
+      with:
+        dotnet-version: ${{ inputs.dotnet_version }}
+        
+    - name: Install dependencies
+      shell: bash
+      env:
+        SOLUTION_FILENAME: ${{ inputs.solution_filename }}
+      run: dotnet restore "${SOLUTION_FILENAME}"
+
+    - name: Build
+      shell: bash
+      env:
+        SOLUTION_FILENAME: ${{ inputs.solution_filename }}
+      run: dotnet build "${SOLUTION_FILENAME}" --configuration Release --no-restore
