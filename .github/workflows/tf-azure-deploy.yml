@@ -1,0 +1,62 @@
+run-name: 'Terraform Deploy - ${{inputs.environment}} (${{inputs.action}})'
+name: 'Terraform Deploy'
+
+on:
+  workflow_dispatch:
+    inputs:
+      environment:
+        description: 'Azure deployment environment'
+        required: true
+        default: 'development'
+        type: choice
+        options:
+          - development
+          - staging
+          - production
+      
+      action:
+        description: Test the planned changes or plan and apply the changes
+        default: 'Plan Only'
+        type: choice
+        options:
+          - 'Plan Only'
+          - 'Plan & Apply'
+
+defaults:
+  run:
+    working-directory: ./terraform
+
+# Permissions for OIDC authentication
+permissions:
+  id-token: write
+  contents: write
+  issues: write
+
+env:
+  ARM_CLIENT_ID: ${{ secrets.AZURE_CLIENT_ID }}
+  ARM_SUBSCRIPTION_ID: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
+  ARM_TENANT_ID: ${{ secrets.AZURE_TENANT_ID }}
+  ARM_USE_OIDC: true
+
+jobs:
+  terraform:
+    name: 'Terraform - ${{inputs.action}}'
+    runs-on: ubuntu-latest
+    environment: ${{ inputs.environment }}
+    
+    steps:
+      # Checkout the repository to the GitHub Actions runner
+      - name: Checkout
+        uses: actions/checkout@v7
+
+      # Install the latest version of the Terraform CLI
+      - name: Setup Terraform
+        uses: hashicorp/setup-terraform@v4
+        with:
+          terraform_version: 1.10.5
+          terraform_wrapper: false
+
+      # Checks that all Terraform configuration files adhere to a canonical format
+      # Will fail the build if not
+      - name: Terraform Format
+        run: terraform fmt -check
