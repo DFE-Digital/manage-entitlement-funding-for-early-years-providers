@@ -52,7 +52,7 @@ dotnet dev-certs https --trust
 
 (...but see [ADR-0015](./adr/0015-containerisation-base-images.md) about an implication for containerisation security.)
 
-Also, in developmnent only, it is possible to set up a symmetric signing key for dummy tokens to avoid having to rely
+Also, in development only, it is possible to set up a symmetric signing key for dummy tokens to avoid having to rely
 on DfE Sign-In. This key should live in your project's secrets.
 
 To generate the key, from a Terminal:
