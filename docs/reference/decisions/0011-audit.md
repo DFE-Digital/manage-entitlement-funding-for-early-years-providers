@@ -1,4 +1,6 @@
-# ADR-0011: Provide attributable audit trails for business actions
+---
+title: "ADR-0011: Provide attributable audit trails for business actions"
+---
 
 * Status: accepted
 

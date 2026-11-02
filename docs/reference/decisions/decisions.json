@@ -1,0 +1,8 @@
+{
+  "layout": "sub-navigation",
+  "sectionKey": "Decisions",
+  "includeInBreadcrumbs": true,
+  "eleventyNavigation": {
+    "parent": "Decisions"
+  }
+}

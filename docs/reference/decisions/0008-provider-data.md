@@ -1,4 +1,6 @@
-# ADR-0008: Consume provider data through an abstraction layer
+---
+title: "ADR-0008: Consume provider data through an abstraction layer"
+---
 
 * Status: accepted
 

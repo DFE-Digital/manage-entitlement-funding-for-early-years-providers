@@ -1,4 +1,6 @@
-# ADR-0013: Adopt architectural principles from Alpha
+---
+title: "ADR-0013: Adopt architectural principles from Alpha"
+---
 
 * Status: accepted
 

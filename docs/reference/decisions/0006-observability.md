@@ -1,4 +1,6 @@
-# ADR-0006: Design for observability
+---
+title: "ADR-0006: Design for observability"
+---
 
 * Status: accepted
 
