@@ -43,7 +43,9 @@ jobs:
     name: 'Terraform - ${{inputs.action}}'
     runs-on: ubuntu-latest
     environment: ${{ inputs.environment }}
-    
+    outputs:
+      tfplanExitCode: ${{ steps.tf-plan.outputs.exitcode }}
+
     steps:
       # Checkout the repository to the GitHub Actions runner
       - name: Checkout
@@ -60,3 +62,82 @@ jobs:
       # Will fail the build if not
       - name: Terraform Format
         run: terraform fmt -check
+
+      # Sets an environment variable to contain the current IP address
+      - name: IP address env
+        if: ${{ inputs.action == 'Plan & Apply' }}
+        run: echo "CURRENT_IP=$(curl https://api.ipify.org)" >> $GITHUB_ENV
+
+      # Login to Azure using OIDC
+      - name: Login to Azure CLI
+        uses: azure/login@v3
+        with:
+          client-id: ${{ secrets.AZURE_CLIENT_ID }}
+          tenant-id: ${{ secrets.AZURE_TENANT_ID }}
+          subscription-id: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
+
+      # Initialise a new or existing Terraform working directory by creating initial files, loading any remote state, downloading modules, etc.
+      - name: Terraform Init
+        env:
+          TERRAFORM_STATE_RESOURCE_GROUP: ${{ secrets.TERRAFORM_STATE_RESOURCE_GROUP }}
+          TERRAFORM_STATE_STORAGE_ACCOUNT_NAME: ${{ secrets.TERRAFORM_STATE_STORAGE_ACCOUNT_NAME }}
+          TERRAFORM_STATE_STORAGE_CONTAINER_NAME: ${{ secrets.TERRAFORM_STATE_STORAGE_CONTAINER_NAME }}
+          TERRAFORM_STATE_KEY: ${{ secrets.TERRAFORM_STATE_KEY }}
+        run: >
+          terraform init
+          -backend-config="resource_group_name=$TERRAFORM_STATE_RESOURCE_GROUP"
+          -backend-config="storage_account_name=$TERRAFORM_STATE_STORAGE_ACCOUNT_NAME"
+          -backend-config="container_name=$TERRAFORM_STATE_STORAGE_CONTAINER_NAME"
+          -backend-config="key=$TERRAFORM_STATE_KEY"
+
+      # KV certificate authority variables required only in higher (non-development) environments
+      - name: Generate Terraform Secrets
+        id: terraform_secrets
+        env:
+          KV_CERTIFICATE_AUTHORITY_ADMIN_FIRST_NAME: ${{ secrets.KV_CERTIFICATE_AUTHORITY_ADMIN_FIRST_NAME }}
+          KV_CERTIFICATE_AUTHORITY_ADMIN_LAST_NAME: ${{ secrets.KV_CERTIFICATE_AUTHORITY_ADMIN_LAST_NAME }}
+          KV_CERTIFICATE_AUTHORITY_ADMIN_PHONE_NO: ${{ secrets.KV_CERTIFICATE_AUTHORITY_ADMIN_PHONE_NO }}
+          KV_CERTIFICATE_AUTHORITY_PASSWORD: ${{ secrets.KV_CERTIFICATE_AUTHORITY_PASSWORD }}
+          KV_CERTIFICATE_AUTHORITY_USERNAME: ${{ secrets.KV_CERTIFICATE_AUTHORITY_USERNAME }}
+        run: |
+          echo "KV_CERTIFICATE_AUTHORITY_ADMIN_FIRST_NAME"=${{ env.KV_CERTIFICATE_AUTHORITY_ADMIN_FIRST_NAME }} >> $GITHUB_OUTPUT
+          echo "KV_CERTIFICATE_AUTHORITY_ADMIN_LAST_NAME"=${{ env.KV_CERTIFICATE_AUTHORITY_ADMIN_LAST_NAME }} >> $GITHUB_OUTPUT
+          echo "KV_CERTIFICATE_AUTHORITY_ADMIN_PHONE_NO"=${{ env.KV_CERTIFICATE_AUTHORITY_ADMIN_PHONE_NO }} >> $GITHUB_OUTPUT
+          echo "KV_CERTIFICATE_AUTHORITY_PASSWORD"=${{ env.KV_CERTIFICATE_AUTHORITY_PASSWORD }} >> $GITHUB_OUTPUT
+          echo "KV_CERTIFICATE_AUTHORITY_USERNAME"=${{ env.KV_CERTIFICATE_AUTHORITY_USERNAME }} >> $GITHUB_OUTPUT
+
+      # Generates Terraform input variables
+      - name: Generate Terraform Variables
+        shell: bash
+        env:
+          WEB_SECRETS: ${{ toJSON(steps.terraform_secrets.outputs) }}
+          WEB_VARS: ${{ toJSON(vars) }}
+        run: |
+          printf '%s\n' "$WEB_SECRETS" > tmp-secrets.json
+          printf '%s\n' "$WEB_VARS" > tmp-vars.json
+          jq 'with_entries(.key |= ascii_downcase)' tmp-secrets.json > web-secrets.auto.tfvars.json
+          jq 'with_entries(.key |= ascii_downcase)' tmp-vars.json > web-vars.auto.tfvars.json
+
+      # Generates an execution plan for Terraform
+      # An exit code of 0 indicated no changes, 1 a terraform failure, 2 there are pending changes.
+      - name: Terraform Plan
+        id: tf-plan
+        run: |
+          export exitcode=0
+          terraform plan -detailed-exitcode -no-color -out tfplan || export exitcode=$?
+          
+          echo "exitcode=$exitcode" >> $GITHUB_OUTPUT
+          
+          if [ $exitcode -eq 1 ]; then
+            echo Terraform Plan Failed!
+            exit 1
+          else 
+            exit 0
+          fi
+
+      # Terraform Apply
+      - name: Terraform Apply
+        if: ${{ inputs.action == 'Plan & Apply' }}
+        run: terraform apply -auto-approve tfplan
+
+# todo: should we restart app service(s) here?
