@@ -1,4 +1,6 @@
-# ADR-0005: Deploy through automated pipelines
+---
+title: "ADR-0005: Deploy through automated pipelines"
+---
 
 * Status: accepted
 

@@ -1,4 +1,6 @@
-# ADR-0009: Reuse existing identity and onboarding capabilities
+---
+title: "ADR-0009: Reuse existing identity and onboarding capabilities"
+---
 
 * Status: accepted
 

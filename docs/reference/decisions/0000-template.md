@@ -1,4 +1,6 @@
-# Template
+---
+title: ADR template
+---
 
 * Status: accepted
 

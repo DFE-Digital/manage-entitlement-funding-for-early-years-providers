@@ -1,4 +1,6 @@
-# ADR-0002: Use .NET on Azure
+---
+title: "ADR-0002: Use .NET on Azure"
+---
 
 * Status: accepted
 

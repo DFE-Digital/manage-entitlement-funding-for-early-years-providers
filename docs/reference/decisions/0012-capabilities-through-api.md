@@ -1,4 +1,6 @@
-# ADR-0012: Expose business capabilities through APIs
+---
+title: "ADR-0012: Expose business capabilities through APIs"
+---
 
 * Status: accepted
 

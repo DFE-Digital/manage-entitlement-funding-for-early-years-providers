@@ -1,4 +1,6 @@
-# ADR-0004: Use automated testing as the primary quality gate
+---
+title: "ADR-0004: Use automated testing as the primary quality gate"
+---
 
 * Status: accepted
 

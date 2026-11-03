@@ -1,4 +1,6 @@
-# ADR-0010: Security and privacy by design
+---
+title: "ADR-0010: Security and privacy by design"
+---
 
 * Status: accepted
 

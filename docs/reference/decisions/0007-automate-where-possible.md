@@ -1,4 +1,6 @@
-# ADR-0007: Prefer automation over manual operational processes
+---
+title: "ADR-0007: Prefer automation over manual operational processes"
+---
 
 * Status: accepted
 

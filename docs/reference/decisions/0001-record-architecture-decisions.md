@@ -1,4 +1,6 @@
-# ADR-0001: Use MADR framework for ADRs
+---
+title: "ADR-0001: Use MADR framework for ADRs"
+---
 
 * Status: accepted
 
