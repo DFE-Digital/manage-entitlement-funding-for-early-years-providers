@@ -1,20 +1,13 @@
 name: Run Unit Tests
 description: Runs the unit tests and publishes them to the workflow runs
 
-inputs:
-  solution_filename:
-    required: true
-    type: string
-
 runs:
   using: composite
 
   steps:
     - name: Test
       shell: bash
-      env:
-        SOLUTION_FILENAME: ${{ inputs.solution_filename }}
-      run: dotnet test "${SOLUTION_FILENAME}" --no-restore --verbosity normal --collect:"XPlat Code Coverage" --settings "${GITHUB_WORKSPACE}/coverlet.runsettings" --results-directory ./coverage
+      run: just test Release --no-build --no-restore
 
     - name: Inspect coverage
       shell: bash

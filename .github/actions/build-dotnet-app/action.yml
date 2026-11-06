@@ -5,9 +5,6 @@ inputs:
   dotnet_version:
     required: true
     type: string
-  solution_filename:
-    required: true
-    type: string
 
 runs:
   using: composite
@@ -18,14 +15,15 @@ runs:
       with:
         dotnet-version: ${{ inputs.dotnet_version }}
         
+    - name: Set up just
+      uses: extractions/setup-just@v3
+      with:
+        just-version: '1.59.0'
+
     - name: Install dependencies
       shell: bash
-      env:
-        SOLUTION_FILENAME: ${{ inputs.solution_filename }}
-      run: dotnet restore "${SOLUTION_FILENAME}"
+      run: just restore
 
     - name: Build
       shell: bash
-      env:
-        SOLUTION_FILENAME: ${{ inputs.solution_filename }}
-      run: dotnet build "${SOLUTION_FILENAME}" --configuration Release --no-restore
+      run: just build-app Release

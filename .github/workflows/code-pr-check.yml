@@ -7,11 +7,17 @@ on:
     paths:
       - 'src/**'
       - 'tests/**'
+      - 'justfile'
+      - 'ManageEntitlementFunding.slnx'
+      - 'coverlet.runsettings'
   pull_request:
     branches: ["main", "release/**", "fix/**"]
     paths:
       - 'src/**'
       - 'tests/**'
+      - 'justfile'
+      - 'ManageEntitlementFunding.slnx'
+      - 'coverlet.runsettings'
       - '.github/workflows/**'
       - '.github/actions/**'
       - 'terraform/**'
@@ -23,7 +29,6 @@ concurrency:
   
 env:
   DOTNET_VERSION: 10
-  SOLUTION_NAME: 'ManageEntitlementFunding.slnx'
   URL: 'http://127.0.0.1:5000'
   
 jobs:
@@ -49,9 +54,6 @@ jobs:
         uses: ./.github/actions/build-dotnet-app
         with:
           dotnet_version: ${{ env.DOTNET_VERSION }}  
-          solution_filename: ${{ env.SOLUTION_NAME }}
 
       - name: Run unit tests
         uses: ./.github/actions/run-unit-tests
-        with:
-          solution_filename: ${{ env.SOLUTION_NAME }}

@@ -369,3 +369,4 @@ src/ManageEntitlementFunding.Web/wwwroot/govuk-frontend.min.js
 
 # Repomix output
 **/repomix-output.xml
+coverage
