@@ -3,14 +3,30 @@
   "tasks": [
     {
       "label": "build",
-      "command": "dotnet",
+      "command": "just",
       "type": "process",
       "args": [
-        "build",
-        "${workspaceFolder}",
-        "/property:GenerateFullPaths=true",
-        "/consoleloggerparameters:NoSummary"
+        "build"
       ],
+      "options": {
+        "cwd": "${workspaceFolder}"
+      },
+      "group": {
+        "kind": "build",
+        "isDefault": true
+      },
+      "problemMatcher": "$msCompile"
+    },
+    {
+      "label": "build-app",
+      "command": "just",
+      "type": "process",
+      "args": [
+        "build-app"
+      ],
+      "options": {
+        "cwd": "${workspaceFolder}"
+      },
       "problemMatcher": "$msCompile"
     }
   ]

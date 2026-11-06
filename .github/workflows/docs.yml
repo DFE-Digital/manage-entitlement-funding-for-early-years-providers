@@ -6,11 +6,13 @@ on:
     paths:
       - 'docs/**'
       - '.github/workflows/docs.yml'
+      - 'justfile'
   pull_request:
     branches: ["main"]
     paths:
       - 'docs/**'
       - '.github/workflows/docs.yml'
+      - 'justfile'
   workflow_dispatch:
 
 permissions:
@@ -23,9 +25,6 @@ concurrency:
 jobs:
   build:
     runs-on: ubuntu-latest
-    defaults:
-      run:
-        working-directory: docs
     steps:
       - name: Check out repository
         uses: actions/checkout@v7
@@ -33,17 +32,17 @@ jobs:
       - name: Set up Node
         uses: actions/setup-node@v7
         with:
-          node-version: 22
+          node-version: 24
           cache: npm
           cache-dependency-path: docs/package-lock.json
 
-      - name: Install dependencies
-        run: npm ci --ignore-scripts
+      - name: Set up just
+        uses: extractions/setup-just@v3
+        with:
+          just-version: '1.59.0'
 
       - name: Build
-        run: npm run build
-        env:
-          ELEVENTY_ENV: production
+        run: just build-docs
 
       - name: Upload Pages artifact
         if: github.event_name != 'pull_request' && github.ref == 'refs/heads/main'

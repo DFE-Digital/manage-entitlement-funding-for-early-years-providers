@@ -1,21 +1,29 @@
 set windows-shell := ["powershell.exe", "-NoLogo", "-NoProfile", "-Command"]
 
+export ELEVENTY_ENV := "production"
+
 init signing_key:
     dotnet restore ManageEntitlementFunding.slnx
     @dotnet user-secrets set "DevelopmentJwt:SigningKey" "{{signing_key}}" --project src/ManageEntitlementFunding.Api
     @dotnet user-secrets set "DevelopmentJwt:SigningKey" "{{signing_key}}" --project src/ManageEntitlementFunding.Web
     dotnet dev-certs https --trust
 
-build:
-    dotnet build ManageEntitlementFunding.slnx
+build configuration="Debug": (build-app configuration) build-docs
+
+build-app configuration="Debug":
+    dotnet build ManageEntitlementFunding.slnx --configuration "{{configuration}}" /property:GenerateFullPaths=true /consoleloggerparameters:NoSummary
+
+build-docs:
     npm --prefix docs ci --ignore-scripts
     npm --prefix docs run build
 
 run project="Web":
     dotnet run --project "src/ManageEntitlementFunding.{{project}}" --launch-profile https
 
-test:
-    dotnet test ManageEntitlementFunding.slnx
+test configuration="Debug" *args:
+    dotnet test ManageEntitlementFunding.slnx --configuration "{{configuration}}" --verbosity normal --collect:"XPlat Code Coverage" --settings coverlet.runsettings --results-directory coverage {{args}}
+
+check: (build "Release") (test "Release" "--no-build" "--no-restore")
 
 [windows]
 doctor:

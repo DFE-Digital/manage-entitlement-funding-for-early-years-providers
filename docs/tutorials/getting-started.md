@@ -118,7 +118,31 @@ just test
 ```
 
 `just build` builds the .NET solution, installs the documentation's locked npm
-dependencies, and builds the documentation into `artifacts/docs/`.
+dependencies, and builds the production documentation into `artifacts/docs/`.
+The .NET build defaults to Debug; use `just build Release` for Release binaries.
+
+For a faster app-only build, run `just build-app`. To build only the
+documentation, run `just build-docs`.
+
+To run the same build and test commands used in CI:
+
+```shell
+just check
+```
+
+This builds the app in Release, builds the production documentation, and tests
+the Release binaries without rebuilding. `just test` defaults to Debug; use
+`just test Release` to select Release. Both collect coverage into `coverage/`.
+CI additionally publishes coverage reports, enforces its coverage threshold,
+runs security scanning, and deploys documentation.
+
+### Building and debugging in VS Code
+
+With the C# and C# Dev Kit extensions installed, Ctrl+Shift+B runs `just build`.
+F5 runs `just build-app` before debugging, without building the documentation.
+Select **Debug API**, **Debug Web**, or **Launch Both (API + Web)** in the
+**Run and Debug** panel. The combined launch builds once before starting both
+apps. Debugging uses the same HTTPS launch profiles as `just run`.
 
 ## Running the apps
 
@@ -167,7 +191,7 @@ secrets for DfE Sign-In.
 The solution has been set up to enable running of the API and Web projects in debug
 simultaneously. You will need to select the **Run and Debug** panel in VS Code, and
 check that the drop-down list has selected *Launch Both (API + Web)*; then hitting
-F5 should do exactly that. You may need to explicitly *build* the solution first.
+F5 builds the app and starts both projects.
 You may also find you need to explicitly trust the HTTPS developer certificate. To
 do that, from the command prompt type:
 
