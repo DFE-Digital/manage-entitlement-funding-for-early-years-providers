@@ -20,6 +20,10 @@ runs:
       with:
         just-version: '1.59.0'
 
+    - name: Install dependencies
+      shell: bash
+      run: just restore
+
     - name: Build
       shell: bash
       run: just build-app Release

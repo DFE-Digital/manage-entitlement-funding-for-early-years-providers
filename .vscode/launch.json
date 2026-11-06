@@ -3,38 +3,31 @@
   "configurations": [
     {
       "name": "Debug API",
-      "type": "dotnet",
+      "type": "coreclr",
       "request": "launch",
-      "projectPath": "${workspaceFolder}/src/ManageEntitlementFunding.Api/ManageEntitlementFunding.Api.csproj",
-      "launchSettingsProfile": "https",
-      "preLaunchTask": "build-app"
-    },
-    {
-      "name": "Debug Web",
-      "type": "dotnet",
-      "request": "launch",
-      "projectPath": "${workspaceFolder}/src/ManageEntitlementFunding.Web/ManageEntitlementFunding.Web.csproj",
-      "launchSettingsProfile": "https",
-      "preLaunchTask": "build-app"
-    },
-    {
-      "name": "API (compound)",
-      "type": "dotnet",
-      "request": "launch",
-      "projectPath": "${workspaceFolder}/src/ManageEntitlementFunding.Api/ManageEntitlementFunding.Api.csproj",
-      "launchSettingsProfile": "https",
-      "presentation": {
-        "hidden": true
+      "program": "${workspaceFolder}/src/ManageEntitlementFunding.Api/bin/Debug/net10.0/ManageEntitlementFunding.Api.dll",
+      "args": [],
+      "cwd": "${workspaceFolder}/src/ManageEntitlementFunding.Api",
+      "stopAtEntry": false,
+      "env": {
+        "ASPNETCORE_ENVIRONMENT": "Development"
       }
     },
     {
-      "name": "Web (compound)",
-      "type": "dotnet",
+      "name": "Debug Web",
+      "type": "coreclr",
       "request": "launch",
-      "projectPath": "${workspaceFolder}/src/ManageEntitlementFunding.Web/ManageEntitlementFunding.Web.csproj",
-      "launchSettingsProfile": "https",
-      "presentation": {
-        "hidden": true
+      "program": "${workspaceFolder}/src/ManageEntitlementFunding.Web/bin/Debug/net10.0/ManageEntitlementFunding.Web.dll",
+      "args": [],
+      "cwd": "${workspaceFolder}/src/ManageEntitlementFunding.Web",
+      "stopAtEntry": false,
+      "serverReadyAction": {
+        "action": "openExternally",
+        "pattern": "Now listening on:\\s*(https?://\\S+)"
+      },
+      "env": {
+        "ASPNETCORE_ENVIRONMENT": "Development",
+        "ApiBaseUrl": "https://localhost:7168"
       }
     }
   ],
@@ -42,10 +35,10 @@
     {
       "name": "Launch Both (API + Web)",
       "configurations": [
-        "API (compound)",
-        "Web (compound)"
+        "Debug API",
+        "Debug Web"
       ],
-      "preLaunchTask": "build-app",
+      "preLaunchTask": "build",
       "stopAll": true
     }
   ]
