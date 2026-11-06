@@ -15,13 +15,13 @@ public class UnlinkedAccountHoldingModel : PageModel
     public void OnGet()
     {
         // Extract DfE Sign-In user details from authentication claims
-        UserName = User.FindFirst("name")?.Value 
+        UserName = User.FindFirst("name")?.Value
                 ?? User.FindFirst(ClaimTypes.Name)?.Value;
 
-        UserEmail = User.FindFirst("email")?.Value 
+        UserEmail = User.FindFirst("email")?.Value
                  ?? User.FindFirst(ClaimTypes.Email)?.Value;
 
-        SubjectId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value 
+        SubjectId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value
                  ?? User.FindFirst("sub")?.Value;
     }
 }
