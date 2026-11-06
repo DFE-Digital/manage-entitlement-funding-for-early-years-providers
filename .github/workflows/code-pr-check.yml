@@ -7,11 +7,15 @@ on:
     paths:
       - 'src/**'
       - 'tests/**'
+      - '.editorconfig'
+      - 'ManageEntitlementFunding.slnx'
   pull_request:
     branches: ["main", "release/**", "fix/**"]
     paths:
       - 'src/**'
       - 'tests/**'
+      - '.editorconfig'
+      - 'ManageEntitlementFunding.slnx'
       - '.github/workflows/**'
       - '.github/actions/**'
       - 'terraform/**'
@@ -50,6 +54,9 @@ jobs:
         with:
           dotnet_version: ${{ env.DOTNET_VERSION }}  
           solution_filename: ${{ env.SOLUTION_NAME }}
+
+      - name: Check formatting
+        run: dotnet format "${SOLUTION_NAME}" --verify-no-changes --no-restore
 
       - name: Run unit tests
         uses: ./.github/actions/run-unit-tests
