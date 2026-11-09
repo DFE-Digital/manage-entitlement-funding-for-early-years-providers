@@ -12,7 +12,7 @@ build:
     npm --prefix docs run build
 
 run project="Web":
-    dotnet run --project "src/ManageEntitlementFunding.{{project}}" --launch-profile https
+    cd "src/ManageEntitlementFunding.{{project}}" && dotnet {{ if project == "Web" { "watch" } else { "" } }} run --launch-profile https
 
 test:
     dotnet test ManageEntitlementFunding.slnx
