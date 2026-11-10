@@ -4,22 +4,14 @@ on:
   workflow_dispatch: 
   push:
     branches: ["main"]
-    paths:
-      - 'src/**'
-      - 'tests/**'
-      - '.editorconfig'
-      - 'ManageEntitlementFunding.slnx'
+    paths-ignore:
+      - 'docs/**'
+      - '*.md'
   pull_request:
     branches: ["main", "release/**", "fix/**"]
-    paths:
-      - 'src/**'
-      - 'tests/**'
-      - '.editorconfig'
-      - 'ManageEntitlementFunding.slnx'
-      - '.github/workflows/**'
-      - '.github/actions/**'
-      - 'terraform/**'
-      - 'docs/reference/decisions/**'
+    paths-ignore:
+      - 'docs/**'
+      - '*.md'
 
 concurrency:
   group: '${{ github.workflow }} @ ${{ github.event.pull_request.head.label || github.head_ref || github.ref }}'
@@ -27,7 +19,6 @@ concurrency:
   
 env:
   DOTNET_VERSION: 10
-  SOLUTION_NAME: 'ManageEntitlementFunding.slnx'
   URL: 'http://127.0.0.1:5000'
   
 jobs:
@@ -53,12 +44,9 @@ jobs:
         uses: ./.github/actions/build-dotnet-app
         with:
           dotnet_version: ${{ env.DOTNET_VERSION }}  
-          solution_filename: ${{ env.SOLUTION_NAME }}
 
       - name: Check formatting
-        run: dotnet format "${SOLUTION_NAME}" --verify-no-changes --no-restore
+        run: dotnet format ManageEntitlementFunding.slnx --verify-no-changes --no-restore
 
       - name: Run unit tests
         uses: ./.github/actions/run-unit-tests
-        with:
-          solution_filename: ${{ env.SOLUTION_NAME }}
