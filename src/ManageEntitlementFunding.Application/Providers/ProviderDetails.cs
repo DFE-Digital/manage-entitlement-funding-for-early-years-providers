@@ -1,4 +1,4 @@
-﻿namespace ManageEntitlementFunding.Application.Providers;
+namespace ManageEntitlementFunding.Application.Providers;
 
 public record ProviderDetails(
   Guid ProviderId,

@@ -12,65 +12,65 @@ public class AuthHandler(
   IConfiguration configuration,
   IWebHostEnvironment env) : DelegatingHandler
 {
-  private readonly IHttpContextAccessor _httpContextAccessor = httpContextAccessor;
-  private readonly IConfiguration _configuration = configuration;
-  private readonly IWebHostEnvironment _env = env;
+    private readonly IHttpContextAccessor _httpContextAccessor = httpContextAccessor;
+    private readonly IConfiguration _configuration = configuration;
+    private readonly IWebHostEnvironment _env = env;
 
-  protected override async Task<HttpResponseMessage> SendAsync(
-    HttpRequestMessage request,
-    CancellationToken cancellationToken)
-  {
-    if (!_env.IsDevelopment())
+    protected override async Task<HttpResponseMessage> SendAsync(
+      HttpRequestMessage request,
+      CancellationToken cancellationToken)
     {
-      // TODO: when OIDC is properly hooked up, this will need to read the token from session and set it as Bearer token on the request
-      return await base.SendAsync(request, cancellationToken);
+        if (!_env.IsDevelopment())
+        {
+            // TODO: when OIDC is properly hooked up, this will need to read the token from session and set it as Bearer token on the request
+            return await base.SendAsync(request, cancellationToken);
+        }
+
+        return await PropagateDevelopmentToken(request, cancellationToken);
     }
 
-    return await PropagateDevelopmentToken(request, cancellationToken);
-  }
-
-  private async Task<HttpResponseMessage> PropagateDevelopmentToken(
-    HttpRequestMessage request,
-     CancellationToken cancellationToken)
-  {
-    var httpContext = _httpContextAccessor.HttpContext;
-
-    if (httpContext?.User.Identity?.IsAuthenticated == true)
+    private async Task<HttpResponseMessage> PropagateDevelopmentToken(
+      HttpRequestMessage request,
+       CancellationToken cancellationToken)
     {
-      var userId = httpContext.User.FindFirst("sub")?.Value
-                ?? httpContext.User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+        var httpContext = _httpContextAccessor.HttpContext;
 
-      if (!string.IsNullOrEmpty(userId))
-      {
-        string signingKey = _configuration["DevelopmentJwt:SigningKey"]
-              ?? throw new InvalidOperationException("Development JWT signing key is not configured.");
+        if (httpContext?.User.Identity?.IsAuthenticated == true)
+        {
+            var userId = httpContext.User.FindFirst("sub")?.Value
+                      ?? httpContext.User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
 
-        var devToken = CreateDevelopmentJwt(userId, signingKey);
+            if (!string.IsNullOrEmpty(userId))
+            {
+                var signingKey = _configuration["DevelopmentJwt:SigningKey"]
+                      ?? throw new InvalidOperationException("Development JWT signing key is not configured.");
 
-        request.Headers.Authorization = new AuthenticationHeaderValue("Bearer", devToken);
-      }
+                var devToken = CreateDevelopmentJwt(userId, signingKey);
+
+                request.Headers.Authorization = new AuthenticationHeaderValue("Bearer", devToken);
+            }
+        }
+
+        return await base.SendAsync(request, cancellationToken);
     }
 
-    return await base.SendAsync(request, cancellationToken);
-  }
+    private static string CreateDevelopmentJwt(
+    string userId,
+    string signingKey)
+    {
+        var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(signingKey));
 
-  private static string CreateDevelopmentJwt(
-  string userId,
-  string signingKey)
-  {
-    var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(signingKey));
+        var credentials = new SigningCredentials(key, SecurityAlgorithms.HmacSha256);
 
-    var credentials = new SigningCredentials(key, SecurityAlgorithms.HmacSha256);
-
-    var token = new JwtSecurityToken(
-      claims:
-      [
-        new Claim("sub", userId),
+        var token = new JwtSecurityToken(
+          claims:
+          [
+            new Claim("sub", userId),
         new Claim(ClaimTypes.NameIdentifier, userId)
-      ],
-      expires: DateTime.UtcNow.AddHours(1),
-      signingCredentials: credentials);
+          ],
+          expires: DateTime.UtcNow.AddHours(1),
+          signingCredentials: credentials);
 
-    return new JwtSecurityTokenHandler().WriteToken(token);
-  }
+        return new JwtSecurityTokenHandler().WriteToken(token);
+    }
 }

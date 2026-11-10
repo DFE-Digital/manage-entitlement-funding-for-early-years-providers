@@ -1,13 +1,13 @@
+using ManageEntitlementFunding.Api.Tests.Authentication;
+using ManageEntitlementFunding.Api.Tests.Fakes;
+using ManageEntitlementFunding.Application.Providers.GetMyProviders;
+using ManageEntitlementFunding.Application.Providers.GetProvider;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc.Testing;
 using Microsoft.AspNetCore.TestHost;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection.Extensions;
-using ManageEntitlementFunding.Application.Providers.GetMyProviders;
-using ManageEntitlementFunding.Application.Providers.GetProvider;
-using ManageEntitlementFunding.Api.Tests.Authentication;
-using ManageEntitlementFunding.Api.Tests.Fakes;
 
 namespace ManageEntitlementFunding.Api.Tests.Infrastructure
 {

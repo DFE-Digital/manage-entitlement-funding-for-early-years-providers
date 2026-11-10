@@ -8,17 +8,17 @@ namespace ManageEntitlementFunding.Web.Pages;
 [Authorize] // Enforces authentication before loading this page
 public class DashboardModel(ProviderApiClient providerApiClient) : PageModel
 {
-  private readonly ProviderApiClient _providerApiClient = providerApiClient;
+    private readonly ProviderApiClient _providerApiClient = providerApiClient;
 
-  public async Task<IActionResult> OnGetAsync()
-  {
-    var providers = await _providerApiClient.GetUserProvidersAsync();
-
-    if (!providers.Any())
+    public async Task<IActionResult> OnGetAsync()
     {
-      return RedirectToPage("/UnlinkedAccountHolding");
-    }
+        var providers = await _providerApiClient.GetUserProvidersAsync();
 
-    return Page();
-  }
+        if (!providers.Any())
+        {
+            return RedirectToPage("/UnlinkedAccountHolding");
+        }
+
+        return Page();
+    }
 }
