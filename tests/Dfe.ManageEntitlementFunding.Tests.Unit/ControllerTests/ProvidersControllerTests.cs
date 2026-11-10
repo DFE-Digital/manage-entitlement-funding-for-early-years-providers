@@ -1,9 +1,9 @@
 using System.Collections.ObjectModel;
 using System.Net;
 using System.Net.Http.Json;
-using Dfe.ManageEntitlementFunding.Tests.Unit.Infrastructure;
 using Dfe.ManageEntitlementFunding.Application.Providers;
 using Dfe.ManageEntitlementFunding.Contracts.Providers;
+using Dfe.ManageEntitlementFunding.Tests.Unit.Infrastructure;
 
 namespace Dfe.ManageEntitlementFunding.Tests.Unit.ControllerTests
 {

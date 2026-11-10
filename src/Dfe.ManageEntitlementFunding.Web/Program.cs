@@ -1,5 +1,5 @@
-using GovUk.Frontend.AspNetCore;
 using Dfe.ManageEntitlementFunding.Web.Services;
+using GovUk.Frontend.AspNetCore;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Authentication.OpenIdConnect;
 

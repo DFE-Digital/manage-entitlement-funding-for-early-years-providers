@@ -1,7 +1,7 @@
-using Dfe.ManageEntitlementFunding.Tests.Unit.Authentication;
-using Dfe.ManageEntitlementFunding.Tests.Unit.Fakes;
 using Dfe.ManageEntitlementFunding.Application.Providers.GetMyProviders;
 using Dfe.ManageEntitlementFunding.Application.Providers.GetProvider;
+using Dfe.ManageEntitlementFunding.Tests.Unit.Authentication;
+using Dfe.ManageEntitlementFunding.Tests.Unit.Fakes;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc.Testing;
