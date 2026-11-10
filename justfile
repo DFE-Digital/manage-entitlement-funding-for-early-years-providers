@@ -21,7 +21,7 @@ build-docs:
 
 lint-markdown:
     npm --prefix docs ci --ignore-scripts
-    npm --prefix docs run lint
+    npm --prefix docs run lint:md
 
 lint-yaml:
     npm --prefix docs ci --ignore-scripts

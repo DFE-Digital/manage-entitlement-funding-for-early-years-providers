@@ -28,35 +28,23 @@ dotnet format Dfe.ManageEntitlementFunding.slnx
 The check covers supported .NET formatting rules and analyzer diagnostics with
 automatic fixes at warning severity or higher.
 
-## Markdown formatting
+## Markdown & Yaml formatting
 
-Repository markdown is linted in CI. From the repository root, run:
+Repository markdown and yaml are linted in CI. To run locally, from the repository root run:
 
 ```shell
 just lint-markdown
+just lint-yaml
 ```
 
 Lint errors fail the build without modifying files. To apply automatic fixes
 after installing dependencies:
 
 ```shell
-npm --prefix docs run lint:fix
+npm --prefix docs run lint:md:fix
+npm --prefix docs run lint:yaml:fix
 ```
 
 Some errors require manual fixes. The rules in the root
 `.markdownlint.json` are also used by the VS Code
 markdownlint extension.
-
-## YAML formatting
-
-Repository YAML files are checked in CI. From the repository root, run:
-
-```shell
-just lint-yaml
-```
-
-To format YAML files locally:
-
-```shell
-npm --prefix docs run lint:yaml:fix
-```
