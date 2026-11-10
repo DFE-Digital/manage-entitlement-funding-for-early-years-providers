@@ -38,3 +38,9 @@ Open the local URL printed by Eleventy. Markdown lives directly under `docs/`;
 `npm run build` writes generated output to `artifacts/docs/` in the repository
 root. Dependencies remain in `docs/node_modules/`. Both directories are ignored
 by Git.
+
+Documentation builds also lint all repository Markdown, including READMEs.
+Run `just lint-markdown` to check without building the site, or
+`npm --prefix docs run lint:fix` to apply automatic fixes after installing
+dependencies. See the [contributing guide](docs/tutorials/contributing.md) for
+details.

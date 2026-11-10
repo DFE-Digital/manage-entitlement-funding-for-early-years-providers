@@ -1,0 +1,11 @@
+{
+  "globs": ["**/*.md"],
+  "ignores": [
+    ".git/**",
+    "**/node_modules/**",
+    "artifacts/**",
+    "**/bin/**",
+    "**/obj/**",
+    "coverage/**"
+  ]
+}

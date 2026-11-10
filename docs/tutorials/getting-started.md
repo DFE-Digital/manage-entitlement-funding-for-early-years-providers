@@ -118,7 +118,8 @@ just test
 ```
 
 `just build` restores and builds the .NET solution, installs the documentation's locked npm
-dependencies, and builds the production documentation into `artifacts/docs/`.
+dependencies, checks all repository Markdown, and builds the production
+documentation into `artifacts/docs/`.
 The .NET build defaults to Debug; use `just build Release` for Release binaries.
 
 To run the same build and test commands used in CI:
@@ -127,7 +128,7 @@ To run the same build and test commands used in CI:
 just check
 ```
 
-This builds the app in Release, builds the production documentation, and tests
+This builds the app in Release, checks Markdown, builds the production documentation, and tests
 the Release binaries without rebuilding. `just test` defaults to Debug; use
 `just test Release` to select Release. Both collect coverage into `coverage/`.
 CI additionally publishes coverage reports, enforces its coverage threshold,
