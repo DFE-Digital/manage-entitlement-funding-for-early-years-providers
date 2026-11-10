@@ -20,7 +20,7 @@ build-docs:
     npm --prefix docs run build
 
 run project="Web":
-    dotnet run --project "src/ManageEntitlementFunding.{{project}}" --launch-profile https
+    dotnet {{ if project == "Web" { "watch" } else { "run" } }} --project "src/ManageEntitlementFunding.{{project}}" {{ if project == "Web" { "run" } else { "" } }} --launch-profile https
 
 test configuration="Debug" *args:
     dotnet test ManageEntitlementFunding.slnx --configuration "{{configuration}}" --verbosity normal --collect:"XPlat Code Coverage" --settings coverlet.runsettings --results-directory coverage {{args}}
