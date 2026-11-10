@@ -46,7 +46,7 @@ jobs:
           dotnet_version: ${{ env.DOTNET_VERSION }}  
 
       - name: Check formatting
-        run: dotnet format ManageEntitlementFunding.slnx --verify-no-changes --no-restore
+        run: dotnet format Dfe.ManageEntitlementFunding.slnx --verify-no-changes --no-restore
 
       - name: Run unit tests
         uses: ./.github/actions/run-unit-tests

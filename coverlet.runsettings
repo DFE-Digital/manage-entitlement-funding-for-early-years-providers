@@ -6,7 +6,7 @@
         <Configuration>
           <Format>cobertura</Format>
             <Exclude>
-                [ManageEntitlementFunding.Web]AspNetCoreGeneratedDocument.*
+                [Dfe.ManageEntitlementFunding.Web]AspNetCoreGeneratedDocument.*
             </Exclude>
             <ExcludeByFile>
                 **/Microsoft.AspNetCore.OpenApi.SourceGenerators/**/*.cs

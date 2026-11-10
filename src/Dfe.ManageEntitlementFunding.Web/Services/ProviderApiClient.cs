@@ -1,0 +1,22 @@
+using Dfe.ManageEntitlementFunding.Contracts.Providers;
+
+namespace Dfe.ManageEntitlementFunding.Web.Services;
+
+public class ProviderApiClient(HttpClient httpClient)
+{
+    private readonly HttpClient _httpClient = httpClient;
+
+    public async Task<IEnumerable<ProviderSummaryResponse>> GetUserProvidersAsync(
+      CancellationToken cancellationToken = default)
+    {
+        var response = await _httpClient.GetFromJsonAsync<IEnumerable<ProviderSummaryResponse>>("/api/providers/my-providers", cancellationToken);
+        return response ?? [];
+    }
+
+    public async Task<ProviderDetailsResponse?> GetProviderAsync(
+      Guid providerId,
+      CancellationToken cancellationToken = default)
+    {
+        return await _httpClient.GetFromJsonAsync<ProviderDetailsResponse?>($"/api/providers/{providerId}", cancellationToken);
+    }
+}

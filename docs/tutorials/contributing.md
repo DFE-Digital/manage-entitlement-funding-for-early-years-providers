@@ -15,14 +15,14 @@ CI checks the solution against `.editorconfig` after building. From the reposito
 root, run the same check locally:
 
 ```shell
-dotnet format ManageEntitlementFunding.slnx --verify-no-changes --no-restore
+dotnet format Dfe.ManageEntitlementFunding.slnx --verify-no-changes --no-restore
 ```
 
 This assumes dependencies have already been restored. Any required formatting
 changes cause a non-zero exit code and fail the CI build job. To apply fixes locally:
 
 ```shell
-dotnet format ManageEntitlementFunding.slnx
+dotnet format Dfe.ManageEntitlementFunding.slnx
 ```
 
 The check covers supported .NET formatting rules and analyzer diagnostics with

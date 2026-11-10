@@ -162,8 +162,8 @@ to check all dependencies have been installed.
 
 ## Manual setup
 
-For the two projects `ManageEntitlementFunding.Web.csproj` and
-`ManageEntitlementFunding.Api.csproj`, manage user secrets and enter the following:
+For the two projects `Dfe.ManageEntitlementFunding.Web.csproj` and
+`Dfe.ManageEntitlementFunding.Api.csproj`, manage user secrets and enter the following:
 
 ```json
 {
@@ -207,7 +207,7 @@ The output will be a string of characters. Copy this.
 To add this to user secrets in the API project:
 
 ```shell
-cd src/ManageEntitlementFunding.Api
+cd src/Dfe.ManageEntitlementFunding.Api
 
 dotnet user-secrets set "DevelopmentJwt:SigningKey" "your-generated-key"
 ```
@@ -215,7 +215,7 @@ dotnet user-secrets set "DevelopmentJwt:SigningKey" "your-generated-key"
 And to add it to user secrets in the Web project:
 
 ```shell
-cd src/ManageEntitlementFunding.Web
+cd src/Dfe.ManageEntitlementFunding.Web
 
 dotnet user-secrets set "DevelopmentJwt:SigningKey" "your-generated-key"
 ```
