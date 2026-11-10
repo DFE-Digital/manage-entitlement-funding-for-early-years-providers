@@ -5,9 +5,9 @@
       "name": "Debug API",
       "type": "coreclr",
       "request": "launch",
-      "program": "${workspaceFolder}/src/ManageEntitlementFunding.Api/bin/Debug/net10.0/ManageEntitlementFunding.Api.dll",
+      "program": "${workspaceFolder}/src/Dfe.ManageEntitlementFunding.Api/bin/Debug/net10.0/Dfe.ManageEntitlementFunding.Api.dll",
       "args": [],
-      "cwd": "${workspaceFolder}/src/ManageEntitlementFunding.Api",
+      "cwd": "${workspaceFolder}/src/Dfe.ManageEntitlementFunding.Api",
       "stopAtEntry": false,
       "env": {
         "ASPNETCORE_ENVIRONMENT": "Development"
@@ -17,9 +17,9 @@
       "name": "Debug Web",
       "type": "coreclr",
       "request": "launch",
-      "program": "${workspaceFolder}/src/ManageEntitlementFunding.Web/bin/Debug/net10.0/ManageEntitlementFunding.Web.dll",
+      "program": "${workspaceFolder}/src/Dfe.ManageEntitlementFunding.Web/bin/Debug/net10.0/Dfe.ManageEntitlementFunding.Web.dll",
       "args": [],
-      "cwd": "${workspaceFolder}/src/ManageEntitlementFunding.Web",
+      "cwd": "${workspaceFolder}/src/Dfe.ManageEntitlementFunding.Web",
       "stopAtEntry": false,
       "serverReadyAction": {
         "action": "openExternally",
