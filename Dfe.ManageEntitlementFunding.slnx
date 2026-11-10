@@ -1,0 +1,10 @@
+<Solution>
+  <Folder Name="/tests/">
+    <Project Path="tests/Dfe.ManageEntitlementFunding.Tests.Unit/Dfe.ManageEntitlementFunding.Tests.Unit.csproj" />
+  </Folder>
+  <Project Path="src/Dfe.ManageEntitlementFunding.Api/Dfe.ManageEntitlementFunding.Api.csproj" />
+  <Project Path="src/Dfe.ManageEntitlementFunding.Application/Dfe.ManageEntitlementFunding.Application.csproj" />
+  <Project Path="src/Dfe.ManageEntitlementFunding.Contracts/Dfe.ManageEntitlementFunding.Contracts.csproj" />
+  <Project Path="src/Dfe.ManageEntitlementFunding.Domain/Dfe.ManageEntitlementFunding.Domain.csproj" />
+  <Project Path="src/Dfe.ManageEntitlementFunding.Web/Dfe.ManageEntitlementFunding.Web.csproj" />
+</Solution>

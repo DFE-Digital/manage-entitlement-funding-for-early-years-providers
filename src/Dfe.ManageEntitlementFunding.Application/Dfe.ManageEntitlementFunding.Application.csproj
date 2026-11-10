@@ -1,0 +1,8 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <ItemGroup>
+    <ProjectReference
+      Include="..\Dfe.ManageEntitlementFunding.Domain\Dfe.ManageEntitlementFunding.Domain.csproj" />
+  </ItemGroup>
+
+</Project>

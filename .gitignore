@@ -357,15 +357,15 @@ MigrationBackup/
 !.vscode/extensions.json
 
 # Ignore third-party vendor assets and compiled GDS styles
-ManageEntitlementFunding.Web/wwwroot/lib/
-ManageEntitlementFunding.Web/wwwroot/govuk/
-ManageEntitlementFunding.Web/wwwroot/*.min.css
-ManageEntitlementFunding.Web/wwwroot/*.min.js
+Dfe.ManageEntitlementFunding.Web/wwwroot/lib/
+Dfe.ManageEntitlementFunding.Web/wwwroot/govuk/
+Dfe.ManageEntitlementFunding.Web/wwwroot/*.min.css
+Dfe.ManageEntitlementFunding.Web/wwwroot/*.min.js
 
 # Added to .gitignore per GovUk.Frontend.AspNetCore documentation
-src/ManageEntitlementFunding.Web/wwwroot/assets/
-src/ManageEntitlementFunding.Web/wwwroot/govuk-frontend.min.css
-src/ManageEntitlementFunding.Web/wwwroot/govuk-frontend.min.js
+src/Dfe.ManageEntitlementFunding.Web/wwwroot/assets/
+src/Dfe.ManageEntitlementFunding.Web/wwwroot/govuk-frontend.min.css
+src/Dfe.ManageEntitlementFunding.Web/wwwroot/govuk-frontend.min.js
 
 # Repomix output
 **/repomix-output.xml
