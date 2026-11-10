@@ -48,3 +48,17 @@ npm --prefix docs run lint:yaml:fix
 Some errors require manual fixes. The rules in the root
 `.markdownlint.json` are also used by the VS Code
 markdownlint extension.
+
+## YAML formatting
+
+Repository YAML files are checked in CI. From the repository root, run:
+
+```shell
+just lint-yaml
+```
+
+To format YAML files locally:
+
+```shell
+npm --prefix docs run lint:yaml:fix
+```

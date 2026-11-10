@@ -4,19 +4,19 @@ on:
   push:
     branches: ["main"]
     paths:
-      - 'docs/**'
-      - '**/*.md'
-      - '.markdownlint*'
-      - '.github/workflows/docs.yml'
-      - 'justfile'
+      - "docs/**"
+      - "**/*.md"
+      - ".markdownlint*"
+      - ".github/workflows/docs.yml"
+      - "justfile"
   pull_request:
     branches: ["main"]
     paths:
-      - 'docs/**'
-      - '**/*.md'
-      - '.markdownlint*'
-      - '.github/workflows/docs.yml'
-      - 'justfile'
+      - "docs/**"
+      - "**/*.md"
+      - ".markdownlint*"
+      - ".github/workflows/docs.yml"
+      - "justfile"
   workflow_dispatch:
 
 permissions:
@@ -43,7 +43,7 @@ jobs:
       - name: Set up just
         uses: extractions/setup-just@v4
         with:
-          just-version: '1.59.0'
+          just-version: "1.59.0"
 
       - name: Lint Markdown and build documentation
         run: just build-docs
