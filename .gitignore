@@ -370,3 +370,11 @@ src/Dfe.ManageEntitlementFunding.Web/wwwroot/govuk-frontend.min.js
 # Repomix output
 **/repomix-output.xml
 coverage
+
+# Terraform working directories, state and saved plans
+**/.terraform/
+*.tfstate
+*.tfstate.*
+*.tfplan
+crash.log
+crash.*.log

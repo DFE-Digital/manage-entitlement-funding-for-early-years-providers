@@ -11,11 +11,15 @@ manage-entitlement-funding-for-early-years-providers/
 ├─ docs/ -- Technical documentation, including architecture decisions under reference/decisions/
 ├─ prototypes/ -- Proofs of concept and prototype implementations
 ├─ src/
-├─ terraform/ - Terraform project used to implement the Azure infrastructure as code.
+├─ infrastructure/ -- Bicep Terraform-backend bootstrap and Terraform configuration.
 ├─ tests/
 ```
 
 ## Documentation
+
+The [infrastructure draft](infrastructure/README.md) describes the Azure backend
+bootstrap, required configuration and Terraform workflow. Resource names are
+placeholders; no web-app infrastructure is provisioned yet.
 
 The [technical documentation](https://dfe-digital.github.io/manage-entitlement-funding-for-early-years-providers/) is automatically published and hosted on GitHub Pages.
 
