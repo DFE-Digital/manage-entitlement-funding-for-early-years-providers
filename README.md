@@ -17,9 +17,20 @@ manage-entitlement-funding-for-early-years-providers/
 
 ## Documentation
 
-The [infrastructure draft](infrastructure/README.md) describes the Azure backend
-bootstrap, required configuration and Terraform workflow. Resource names are
-placeholders; no web-app infrastructure is provisioned yet.
+The [Bicep bootstrap](infrastructure/bicep/main.bicep) provisions the Terraform
+backend. Its [development parameters](infrastructure/bicep/environments/development.params.json)
+configure `resourcePrefix` (`s297d01`), `serviceCode` (`eyp`), `location`
+(`uksouth`) and `locationShortCode` (`uks`), plus network ranges and tags.
+Bicep derives resource names from these values:
+
+- Resource group: `s297d01rg-uks-eyp-terraform`.
+- Storage account: `s297d01tfstatestorage` (must be globally unique).
+- Log Analytics: `s297d01-uks-eyp-law-tf-state`.
+- VNet: `s297d01-uks-eyp-vnet-tf-state`.
+- Subnet: `s297d01-uks-eyp-snet-tf-state`.
+
+The location short code is supplied explicitly and must match the Azure location.
+No web-app infrastructure is provisioned yet.
 
 The [technical documentation](https://dfe-digital.github.io/manage-entitlement-funding-for-early-years-providers/) is automatically published and hosted on GitHub Pages.
 

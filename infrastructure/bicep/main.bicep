@@ -1,16 +1,21 @@
 targetScope = 'subscription'
 
-param resourceGroupName string
+param resourcePrefix string
+param serviceCode string
 param location string
-param storageAccountName string
+param locationShortCode string
 param tags object = {}
 param storageAccountSku string = 'Standard_ZRS'
-param workspaceName string
-param vnetName string
 param vnetAddressPrefix string
-param subnetName string
 param subnetAddressPrefix string
 param workflowPrincipalId string
+
+var servicePrefix = '${resourcePrefix}-${locationShortCode}-${serviceCode}'
+var resourceGroupName = '${resourcePrefix}rg-${locationShortCode}-${serviceCode}-terraform'
+var storageAccountName = '${resourcePrefix}tfstatestorage'
+var workspaceName = '${servicePrefix}-law-tf-state'
+var vnetName = '${servicePrefix}-vnet-tf-state'
+var subnetName = '${servicePrefix}-snet-tf-state'
 
 resource rg 'Microsoft.Resources/resourceGroups@2021-04-01' = {
   name: resourceGroupName

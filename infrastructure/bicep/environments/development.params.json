@@ -1,16 +1,16 @@
 {
-  "resourceGroupName": { "value": "REPLACE_ME-development-terraform" },
+  "resourcePrefix": { "value": "s297d01" },
+  "serviceCode": { "value": "eyentitlementfunding" },
   "location": { "value": "uksouth" },
-  "storageAccountName": { "value": "REPLACE_MEdevtfstate" },
-  "workspaceName": { "value": "REPLACE_ME-development-tf-state" },
-  "vnetName": { "value": "REPLACE_ME-development-tf-state-vnet" },
+  "locationShortCode": { "value": "uks" },
   "vnetAddressPrefix": { "value": "10.1.0.0/16" },
-  "subnetName": { "value": "REPLACE_ME-development-tf-state-subnet" },
   "subnetAddressPrefix": { "value": "10.1.0.0/24" },
   "tags": {
     "value": {
       "Environment": "development",
-      "Source": "bicep"
+      "Source": "bicep",
+      "Product": "Manage Entitlement Funding for Early Years Providers",
+      "Service Offering": "Manage Entitlement Funding for Early Years Providers"
     }
   }
 }
