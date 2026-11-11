@@ -5,12 +5,16 @@ on:
     branches: ["main"]
     paths:
       - 'docs/**'
+      - '**/*.md'
+      - '.markdownlint*'
       - '.github/workflows/docs.yml'
       - 'justfile'
   pull_request:
     branches: ["main"]
     paths:
       - 'docs/**'
+      - '**/*.md'
+      - '.markdownlint*'
       - '.github/workflows/docs.yml'
       - 'justfile'
   workflow_dispatch:
@@ -41,7 +45,7 @@ jobs:
         with:
           just-version: '1.59.0'
 
-      - name: Build
+      - name: Lint Markdown and build documentation
         run: just build-docs
 
       - name: Upload Pages artifact
