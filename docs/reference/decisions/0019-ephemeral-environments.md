@@ -10,7 +10,7 @@ Accepted
 
 We need to test changes against a deployed application and its supporting
 infrastructure before they are merged. The stack is expected to include at least
-a Microsoft SQL Server (MSSQL) database as the service develops.
+a database as the service develops.
 
 Unit tests and tests using substitutes cannot verify every interaction between
 the application, database, deployment configuration and Azure infrastructure.
