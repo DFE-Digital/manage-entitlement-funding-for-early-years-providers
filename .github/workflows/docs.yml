@@ -37,7 +37,7 @@ jobs:
           cache-dependency-path: docs/package-lock.json
 
       - name: Set up just
-        uses: extractions/setup-just@v3
+        uses: extractions/setup-just@v4
         with:
           just-version: '1.59.0'
 
