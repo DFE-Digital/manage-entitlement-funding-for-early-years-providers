@@ -1,0 +1,140 @@
+name: Terraform Deployment
+
+on:
+  workflow_call:
+    inputs:
+      operation:
+        description: deploy or destroy
+        required: true
+        type: string
+      deployment:
+        required: true
+        type: string
+      source-ref:
+        required: true
+        type: string
+
+permissions:
+  contents: read
+  id-token: write
+
+# Bootstrap and firewall changes affect the shared development backend.
+concurrency:
+  group: terraform-development
+  cancel-in-progress: false
+  queue: max
+
+jobs:
+  terraform:
+    name: ${{ inputs.operation }} ${{ inputs.deployment }}
+    runs-on: ubuntu-latest
+    environment: development
+    defaults:
+      run:
+        working-directory: ./source/infrastructure/terraform
+    env:
+      ARM_CLIENT_ID: ${{ secrets.AZURE_CLIENT_ID }}
+      ARM_SUBSCRIPTION_ID: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
+      ARM_TENANT_ID: ${{ secrets.AZURE_TENANT_ID }}
+      ARM_USE_OIDC: true
+      TF_IN_AUTOMATION: true
+      DEPLOY_ENVIRONMENT: development
+      DEPLOYMENT: ${{ inputs.deployment }}
+      TF_VAR_deployment: ${{ inputs.deployment }}
+
+    steps:
+      - name: Checkout trusted backend and scripts
+        uses: actions/checkout@v7
+        with:
+          ref: refs/heads/main
+          path: control
+          persist-credentials: false
+
+      - name: Checkout deployment configuration
+        uses: actions/checkout@v7
+        with:
+          ref: ${{ inputs.source-ref }}
+          path: source
+          persist-credentials: false
+
+      - name: Azure Login (OIDC)
+        uses: azure/login@f5d393ae46f8fde4be8b75f32e3fc50e654ad0ca
+        with:
+          client-id: ${{ secrets.AZURE_CLIENT_ID }}
+          tenant-id: ${{ secrets.AZURE_TENANT_ID }}
+          subscription-id: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
+
+      - name: Get Workflow Service Principal Object ID
+        id: get-sp-id
+        working-directory: .
+        run: |
+          SP_OBJECT_ID=$(az ad sp show --id "$ARM_CLIENT_ID" --query id -o tsv)
+          test -n "$SP_OBJECT_ID" || { echo "::error::Workflow service principal was not found."; exit 1; }
+          echo "object_id=$SP_OBJECT_ID" >> "$GITHUB_OUTPUT"
+
+      - name: Bootstrap shared development backend
+        id: bootstrap-tf
+        uses: azure/arm-deploy@v2
+        with:
+          scope: subscription
+          region: uksouth
+          template: ./control/infrastructure/bicep/main.bicep
+          deploymentName: terraform-${{ env.DEPLOY_ENVIRONMENT }}
+          parameters: ./control/infrastructure/bicep/environments/${{ env.DEPLOY_ENVIRONMENT }}.params.json workflowPrincipalId=${{ steps.get-sp-id.outputs.object_id }}
+
+      - name: Setup Terraform
+        uses: hashicorp/setup-terraform@dfe3c3f87815947d99a8997f908cb6525fc44e9e
+        with:
+          terraform_version: ${{ vars.TERRAFORM_VERSION || '1.15.8' }}
+          terraform_wrapper: false
+
+      - name: Get runner public IP
+        id: runner-ip
+        working-directory: .
+        run: |
+          WORKER_IP=$(curl --fail --silent --show-error --retry 3 https://api.ipify.org)
+          echo "address=$WORKER_IP" >> "$GITHUB_OUTPUT"
+
+      - name: Open backend network access
+        id: unlock-state
+        working-directory: ./control/infrastructure
+        env:
+          ACC_NAME: ${{ steps.bootstrap-tf.outputs.storageAccountName }}
+          RG_NAME: ${{ steps.bootstrap-tf.outputs.resourceGroupName }}
+          WORKER_IP: ${{ steps.runner-ip.outputs.address }}
+        run: bash scripts/manage-storage-access.sh "$ACC_NAME" "$RG_NAME" true "$WORKER_IP"
+
+      - name: Terraform Init
+        env:
+          ACC_NAME: ${{ steps.bootstrap-tf.outputs.storageAccountName }}
+          RG_NAME: ${{ steps.bootstrap-tf.outputs.resourceGroupName }}
+        run: |
+          STATE_KEY="deployments/$DEPLOYMENT.tfstate"
+          if [ "$DEPLOYMENT" = main ]; then STATE_KEY=terraform.tfstate; fi
+          terraform init -input=false -upgrade \
+            -backend-config="resource_group_name=$RG_NAME" \
+            -backend-config="storage_account_name=$ACC_NAME" \
+            -backend-config="container_name=tfstate" \
+            -backend-config="key=$STATE_KEY"
+
+      - name: Terraform Plan
+        env:
+          TF_VAR_resource_group_name: ${{ steps.bootstrap-tf.outputs.resourceGroupName }}-app-${{ env.DEPLOYMENT }}
+          OPERATION: ${{ inputs.operation }}
+        run: |
+          PLAN_OPTIONS=()
+          if [ "$OPERATION" = destroy ]; then PLAN_OPTIONS+=(-destroy); fi
+          terraform plan "${PLAN_OPTIONS[@]}" -input=false -no-color \
+            -out=main.tfplan -var-file="environments/$DEPLOY_ENVIRONMENT.tfvars"
+
+      - name: Terraform Apply
+        run: terraform apply -input=false -auto-approve main.tfplan
+
+      - name: Close backend network access
+        if: ${{ always() && steps.unlock-state.outcome != 'skipped' && steps.bootstrap-tf.outcome == 'success' && steps.runner-ip.outcome == 'success' }}
+        working-directory: ./control/infrastructure
+        env:
+          ACC_NAME: ${{ steps.bootstrap-tf.outputs.storageAccountName }}
+          RG_NAME: ${{ steps.bootstrap-tf.outputs.resourceGroupName }}
+          WORKER_IP: ${{ steps.runner-ip.outputs.address }}
+        run: bash scripts/manage-storage-access.sh "$ACC_NAME" "$RG_NAME" false "$WORKER_IP"
