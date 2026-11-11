@@ -3,8 +3,9 @@ resource "azurerm_resource_group" "application" {
   location = var.location
 
   tags = {
-    Environment = var.environment
-    Deployment  = var.deployment
-    Source      = "terraform"
+    Environment        = var.environment
+    Deployment         = var.deployment
+    Source             = "terraform"
+    Product            = "Manage Entitlement Funding for Early Years Providers"
   }
 }

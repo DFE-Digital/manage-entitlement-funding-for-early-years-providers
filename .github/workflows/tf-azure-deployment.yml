@@ -102,11 +102,31 @@ jobs:
         run: |
           STATE_KEY="deployments/$DEPLOYMENT.tfstate"
           if [ "$DEPLOYMENT" = main ]; then STATE_KEY=terraform.tfstate; fi
-          terraform init -input=false -upgrade \
-            -backend-config="resource_group_name=$RG_NAME" \
-            -backend-config="storage_account_name=$ACC_NAME" \
-            -backend-config="container_name=tfstate" \
-            -backend-config="key=$STATE_KEY"
+
+          # When bootstrapping, permissions can take a moment to propagate; so
+          # retry a few times due to eventual consistency.
+          for attempt in {1..3}; do
+            if OUTPUT=$(terraform init -input=false -no-color -upgrade \
+              -backend-config="resource_group_name=$RG_NAME" \
+              -backend-config="storage_account_name=$ACC_NAME" \
+              -backend-config="container_name=tfstate" \
+              -backend-config="key=$STATE_KEY" 2>&1); then
+              printf '%s\n' "$OUTPUT"
+              break
+            else
+              STATUS=$?
+            fi
+
+            printf '%s\n' "$OUTPUT"
+            if [ "$attempt" -eq 3 ] ||
+              [[ "$OUTPUT" != *"Error loading state:"* ]] ||
+              ! grep -Eq '403.*(AuthorizationFailure|AuthorizationPermissionMismatch)' <<< "$OUTPUT"; then
+              exit "$STATUS"
+            fi
+
+            echo "Backend access denied; retrying in 30 seconds ($attempt/3)."
+            sleep 30
+          done
 
       - name: Terraform Plan
         env:
