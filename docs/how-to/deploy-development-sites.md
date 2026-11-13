@@ -17,6 +17,8 @@ security limits, see the [development deployment reference](../reference/develop
 - A subscription to deploy into
 - The following resource providers registered in the subscription:
   - Microsoft.Web
+- Sufficient quota for required resources e.g. F1 VMs
+  - You may need to request quota in order to nudge total regional quota
 - An app registration configured to allow OIDC access from GitHub
 
 ## Configure deployment access
