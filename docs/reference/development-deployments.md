@@ -11,9 +11,11 @@ eleventyNavigation:
 
 ## Purpose and limits
 
-This is an interim deployment for feature work, not the final infrastructure
-design or a production security baseline. Use synthetic data only. Do not connect
-production services or load real provider, child or funding records.
+The development environment; including deployments triggered by pushes to `main`
+and deployments from PR branches, are intended to support feature work.
+
+They do not constitute the final infrastructure design. You should only use synthetic
+data, and connect only to staging or development services.
 
 For setup and acceptance checks, see
 [Deploy and verify development sites](../how-to/deploy-development-sites.md).
@@ -27,22 +29,23 @@ lifecycle; closing a PR removes its application resources, not the backend.
 
 ## Hosting and cost
 
+Each deployment uses the same development subscription and `development` GitHub environment.
+They create a dedicated Azure resource group and terraform state key. Note that the
+shared backend for deployments (bicep bootstrap) is outside of the PR lifecycle.
+
 The Web and API apps share one Linux App Service plan per deployment. The default
-SKU is `F1`; override `app_service_sku` with `B1` if quotas or cold starts obstruct
-development. Free hosting has no SLA, no Always On, and a daily CPU quota per app.
-It is not suitable for production or sustained load tests. Check regional and
-subscription quotas before creating many PR environments.
+SKU is `F1`; the intention is to minimise costs. Free hosting has no SLA, no
+Always On, and a daily CPU quota per app.
 
 The Web app is served directly from its HTTPS `azurewebsites.net` hostname.
 Front Door is deliberately omitted: it adds a standing charge per deployment
-without being needed for this temporary access gate. Applying this configuration
-to a deployment that already has Front Door removes those resources and changes
-the published URL. Review the Terraform plan before applying.
+without being needed for this temporary access gate.
 
 The Terraform backend's storage, private endpoint and diagnostics still incur
-charges. F1 does not make the entire environment free. Use Azure Cost Management
-to monitor the development subscription and arrange an appropriate budget alert.
-No new central monitoring platform is introduced by this interim deployment.
+charges.
+
+We can and should reconsider this if it proves inconvenient; but at the same time
+bear in mind that ephemeral deployments are not free.
 
 ## Shared-password access gate
 
@@ -58,16 +61,7 @@ missing or blank password fails application startup rather than opening access.
 The gate cannot be enabled outside the ASP.NET Core Development environment.
 Local development leaves it disabled by default.
 
-Unlike the source implementation, every Web path is gated, including static
-assets and the development login. There are no user-agent-based probe exemptions
-or anonymous health exceptions. Responses use `Cache-Control: no-store`; rejected
-requests are logged without logging credentials. Malformed credentials return
-401, not an exception page.
-
-Shared Basic Auth over HTTPS is a temporary access control, not individual
-identity management: there is no MFA, per-user revocation or reliable attribution.
-Browsers can retain credentials, so signing out of the simulated application does
-not sign out of the outer gate. Share the password only through an approved
+Share the password only through an approved
 channel and rotate it when team access changes or disclosure is suspected.
 
 ## Environment and signing-key safeguards
@@ -85,31 +79,18 @@ production omit both the resource and the setting. Development Basic Auth
 settings are also omitted outside development, and its password is not required
 for those environments.
 
-Both apps reject startup if `DevelopmentJwt:SigningKey` has any non-null value
-outside Development, including an empty string. Remove the setting entirely;
-blanking it is not sufficient. Their existing runtime authentication checks also
-prevent symmetric development tokens from being used outside Development.
-
-The Terraform `moved` block preserves an existing development key when its
-resource address changes to the counted form `[0]`. This is a state-address
-migration, not a request to rotate the key. Removing a key resource or app setting
-does not erase historical state versions.
-
-Development retains its existing resource names. Staging and production names
-include their environment to avoid colliding with development's global App
-Service names.
-
 ## Credentials and state
+
+The browser password is supplied through
+the development GitHub environment; see the [deployment how-to](../how-to/deploy-development-sites.md).
 
 The workflow passes the shared site password as the sensitive Terraform variable
 `development_basic_auth_password`, validates it before Azure login, and never
-outputs it. The signing key is generated separately for each development
-deployment; it is not the browser's Basic Auth password.
+outputs it.
 
-Terraform's sensitive marker redacts normal output, but credentials are still
-held in Terraform state and saved plan files. Keep backend access restricted and
-do not publish plan files as artifacts. The browser password is supplied through
-the development GitHub environment; see the [deployment how-to](../how-to/deploy-development-sites.md).
+There is also a shared key used for communication between the web app and the api.
+This signing key is generated separately for each development
+deployment; and is unrelated to the browser's Basic Auth password.
 
 ## API and deployment access
 
@@ -124,23 +105,9 @@ standard public-Azure App Service hostname so the Web app can be created before
 the API, avoiding a dependency cycle. If the hosting model or hostname convention
 changes, revisit both the URL and these ingress rules.
 
-FTP is disabled and both FTP and SCM/WebDeploy basic publishing credentials are
-disabled. The workflows deploy ZIP packages using Azure OIDC authentication.
-SCM remains network-reachable for GitHub-hosted runners and requires Azure
-authorization; it is separate from application ingress and the browser gate.
-
-Azure deployment still uses Entra-backed OIDC, as before. The browser access gate
-does not require a new Entra app registration, user assignments or directory
-permissions.
-
 ## Pipeline trust and teardown
 
 Only trusted same-repository, non-draft PRs deploy automatically. Fork PRs do not.
 The existing Terraform cleanup flow is retained. Internal PR infrastructure and
 scripts execute with the development deployment identity, including on teardown.
 This deliberately trusts internal contributors with those permissions.
-
-Confirm the deployment identity's actual role assignments are limited to the
-intended development resources/subscription. Configuration targeting development
-does not enforce that boundary. Different state keys are not an authorization
-boundary when the identity can access the shared backend.
