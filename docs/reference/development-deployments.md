@@ -108,6 +108,6 @@ changes, revisit both the URL and these ingress rules.
 ## Pipeline trust and teardown
 
 Only trusted same-repository, non-draft PRs deploy automatically. Fork PRs do not.
-The existing Terraform cleanup flow is retained. Internal PR infrastructure and
-scripts execute with the development deployment identity, including on teardown.
-This deliberately trusts internal contributors with those permissions.
+
+Internal contributors are deliberately trusted with permissions to stand up and tear
+down environments in the `development` subscription.
