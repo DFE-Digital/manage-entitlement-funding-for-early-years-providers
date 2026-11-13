@@ -111,11 +111,22 @@ jobs:
           STATE_KEY="deployments/$DEPLOYMENT.tfstate"
           if [ "$DEPLOYMENT" = main ]; then STATE_KEY=terraform.tfstate; fi
 
-          terraform init -input=false -no-color -upgrade \
-            -backend-config="resource_group_name=$RG_NAME" \
-            -backend-config="storage_account_name=$ACC_NAME" \
-            -backend-config="container_name=tfstate" \
-            -backend-config="key=$STATE_KEY"
+          for attempt in {1..3}; do
+            echo "Terraform init attempt $attempt/3..."
+            if terraform init -input=false -no-color -upgrade \
+              -backend-config="resource_group_name=$RG_NAME" \
+              -backend-config="storage_account_name=$ACC_NAME" \
+              -backend-config="container_name=tfstate" \
+              -backend-config="key=$STATE_KEY"; then
+              exit 0
+            fi
+            if [ "$attempt" -eq 3 ]; then
+              echo "::error::Terraform init failed after 3 attempts."
+              exit 1
+            fi
+            echo "::warning::Terraform init failed; retrying in 30 seconds to allow backend access changes to propagate."
+            sleep 30
+          done
 
       - name: Terraform Plan
         env:

@@ -23,6 +23,14 @@ run "development_creates_key_and_settings" {
     )
     error_message = "Development must provision the signing key and configure the development authentication gates."
   }
+
+  assert {
+    condition = (
+      azurerm_linux_web_app.api.site_config[0].health_check_path == "/openapi/v1.json" &&
+      azurerm_linux_web_app.api.site_config[0].health_check_eviction_time_in_min == 10
+    )
+    error_message = "Development must configure both the API health-check path and its required eviction time."
+  }
 }
 
 run "staging_omits_development_credentials" {
@@ -44,6 +52,14 @@ run "staging_omits_development_credentials" {
     )
     error_message = "Staging must use its own runtime environment without provisioning or injecting development credentials."
   }
+
+  assert {
+    condition = (
+      azurerm_linux_web_app.api.site_config[0].health_check_path == null &&
+      azurerm_linux_web_app.api.site_config[0].health_check_eviction_time_in_min == null
+    )
+    error_message = "Staging must omit both development-only API health-check settings."
+  }
 }
 
 run "production_omits_development_credentials" {
@@ -64,5 +80,13 @@ run "production_omits_development_credentials" {
       azurerm_linux_web_app.web.app_settings["ASPNETCORE_ENVIRONMENT"] == "Production"
     )
     error_message = "Production must use its own runtime environment without provisioning or injecting development credentials."
+  }
+
+  assert {
+    condition = (
+      azurerm_linux_web_app.api.site_config[0].health_check_path == null &&
+      azurerm_linux_web_app.api.site_config[0].health_check_eviction_time_in_min == null
+    )
+    error_message = "Production must omit both development-only API health-check settings."
   }
 }

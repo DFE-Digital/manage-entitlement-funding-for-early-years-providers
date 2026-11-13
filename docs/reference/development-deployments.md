@@ -27,6 +27,11 @@ development subscription and GitHub environment. Each has a dedicated applicatio
 resource group and Terraform state key. The shared backend is outside the PR
 lifecycle; closing a PR removes its application resources, not the backend.
 
+The workflow temporarily opens backend storage access for the runner, then
+attempts `terraform init` up to three times, waiting 30 seconds between failures
+to allow access changes to propagate. If all attempts fail, the job fails.
+Backend access cleanup runs even when initialisation fails.
+
 ## Hosting and cost
 
 Each deployment uses the same development subscription and `development` GitHub environment.
@@ -36,6 +41,11 @@ shared backend for deployments (bicep bootstrap) is outside of the PR lifecycle.
 The Web and API apps share one Linux App Service plan per deployment. The default
 SKU is `F1`; the intention is to minimise costs. Free hosting has no SLA, no
 Always On, and a daily CPU quota per app.
+
+The development API uses `/openapi/v1.json` for App Service health checks, paired
+with the provider-required 10-minute eviction setting. Free hosting supports
+health metrics but not unhealthy-instance replacement. Both health-check settings
+are omitted outside development.
 
 The Web app is served directly from its HTTPS `azurewebsites.net` hostname.
 Front Door is deliberately omitted: it adds a standing charge per deployment

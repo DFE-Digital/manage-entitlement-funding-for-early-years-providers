@@ -60,6 +60,7 @@ resource "azurerm_linux_web_app" "api" {
   site_config {
     always_on                         = false
     health_check_path                 = local.is_development ? "/openapi/v1.json" : null
+    health_check_eviction_time_in_min = local.is_development ? 10 : null
     minimum_tls_version               = "1.2"
     scm_minimum_tls_version           = "1.2"
     ftps_state                        = "Disabled"
