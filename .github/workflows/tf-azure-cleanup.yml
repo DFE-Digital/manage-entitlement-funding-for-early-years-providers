@@ -1,0 +1,26 @@
+name: Terraform Cleanup
+run-name: Remove development deployment pr-${{ github.event.pull_request.number }}
+
+on:
+  pull_request_target:
+    branches:
+      - main
+    types:
+      - closed
+
+permissions:
+  contents: read
+
+jobs:
+  destroy:
+    name: Destroy PR deployment
+    if: github.event.pull_request.head.repo.full_name == github.repository
+    permissions:
+      contents: read
+      id-token: write
+    uses: ./.github/workflows/tf-azure-deployment.yml
+    with:
+      operation: destroy
+      deployment: pr-${{ github.event.pull_request.number }}
+      source-ref: ${{ github.event.pull_request.head.sha }}
+    secrets: inherit

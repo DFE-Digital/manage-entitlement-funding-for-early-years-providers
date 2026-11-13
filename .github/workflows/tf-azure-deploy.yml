@@ -1,62 +1,71 @@
-run-name: 'Terraform Deploy - ${{inputs.environment}} (${{inputs.action}})'
-name: 'Terraform Deploy'
+name: Terraform Deploy
+run-name: Development deployment (${{ github.ref_name }})
 
 on:
-  workflow_dispatch:
-    inputs:
-      environment:
-        description: 'Azure deployment environment'
-        required: true
-        default: 'development'
-        type: choice
-        options:
-          - development
-          - staging
-          - production
-      
-      action:
-        description: Test the planned changes or plan and apply the changes
-        default: 'Plan Only'
-        type: choice
-        options:
-          - 'Plan Only'
-          - 'Plan & Apply'
+  push:
+    branches:
+      - main
+  pull_request:
+    branches:
+      - main
+    types:
+      - opened
+      - synchronize
+      - reopened
+      - ready_for_review
 
-defaults:
-  run:
-    working-directory: ./terraform
-
-# Permissions for OIDC authentication
 permissions:
-  id-token: write
-  contents: write
-  issues: write
-
-env:
-  ARM_CLIENT_ID: ${{ secrets.AZURE_CLIENT_ID }}
-  ARM_SUBSCRIPTION_ID: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
-  ARM_TENANT_ID: ${{ secrets.AZURE_TENANT_ID }}
-  ARM_USE_OIDC: true
+  contents: read
 
 jobs:
-  terraform:
-    name: 'Terraform - ${{inputs.action}}'
+  validate:
+    name: Validate infrastructure
     runs-on: ubuntu-latest
-    environment: ${{ inputs.environment }}
-    
+    defaults:
+      run:
+        working-directory: ./infrastructure/terraform
     steps:
-      # Checkout the repository to the GitHub Actions runner
       - name: Checkout
         uses: actions/checkout@v7
-
-      # Install the latest version of the Terraform CLI
-      - name: Setup Terraform
-        uses: hashicorp/setup-terraform@v4
         with:
-          terraform_version: 1.10.5
+          persist-credentials: false
+
+      - name: Compile Bicep
+        working-directory: .
+        run: az bicep build --file infrastructure/bicep/main.bicep --stdout > /dev/null
+
+      - name: Check infrastructure scripts
+        working-directory: .
+        run: bash -n infrastructure/scripts/manage-storage-access.sh
+
+      - name: Setup Terraform
+        uses: hashicorp/setup-terraform@dfe3c3f87815947d99a8997f908cb6525fc44e9e
+        with:
+          terraform_version: '1.15.8'
           terraform_wrapper: false
 
-      # Checks that all Terraform configuration files adhere to a canonical format
-      # Will fail the build if not
       - name: Terraform Format
-        run: terraform fmt -check
+        run: terraform fmt -check -recursive
+
+      - name: Terraform Init (validation only)
+        run: terraform init -input=false -backend=false
+
+      - name: Terraform Validate
+        run: terraform validate
+
+  deploy:
+    name: Deploy to development
+    needs: validate
+    if: >-
+      github.event_name == 'push' ||
+      (github.event.pull_request.head.repo.full_name == github.repository &&
+       !github.event.pull_request.draft)
+    permissions:
+      contents: read
+      id-token: write
+    uses: ./.github/workflows/tf-azure-deployment.yml
+    with:
+      operation: deploy
+      deployment: ${{ github.event_name == 'push' && 'main' || format('pr-{0}', github.event.pull_request.number) }}
+      source-ref: ${{ github.sha }}
+    secrets: inherit
