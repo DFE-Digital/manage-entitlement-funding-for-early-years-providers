@@ -13,7 +13,6 @@ on:
       source-ref:
         required: true
         type: string
-
 permissions:
   contents: read
   id-token: write
@@ -40,8 +39,17 @@ jobs:
       DEPLOY_ENVIRONMENT: development
       DEPLOYMENT: ${{ inputs.deployment }}
       TF_VAR_deployment: ${{ inputs.deployment }}
+      TF_VAR_development_basic_auth_password: ${{ secrets.DEVELOPMENT_BASIC_AUTH_PASSWORD }}
 
     steps:
+      - name: Check development access password
+        working-directory: .
+        run: |
+          if [ "${#TF_VAR_development_basic_auth_password}" -lt 32 ] || [[ "$TF_VAR_development_basic_auth_password" =~ ^[[:space:]]*$ ]]; then
+            echo "::error::Set DEVELOPMENT_BASIC_AUTH_PASSWORD to a generated password of at least 32 characters in the development GitHub environment."
+            exit 1
+          fi
+
       - name: Checkout deployment configuration
         uses: actions/checkout@v7
         with:
@@ -121,6 +129,33 @@ jobs:
 
       - name: Terraform Apply
         run: terraform apply -input=false -auto-approve main.tfplan
+
+      - name: Setup .NET
+        if: ${{ inputs.operation == 'deploy' }}
+        uses: actions/setup-dotnet@v6
+        with:
+          global-json-file: global.json
+
+      - name: Publish and deploy apps
+        if: ${{ inputs.operation == 'deploy' }}
+        working-directory: .
+        env:
+          TF_DIR: infrastructure/terraform
+        run: |
+          RG_NAME=$(terraform -chdir="$TF_DIR" output -raw resource_group_name)
+          API_APP=$(terraform -chdir="$TF_DIR" output -raw api_app_name)
+          WEB_APP=$(terraform -chdir="$TF_DIR" output -raw web_app_name)
+
+          for project in Api:"$API_APP" Web:"$WEB_APP"; do
+            name=${project%%:*}
+            app=${project#*:}
+            dotnet publish "src/Dfe.ManageEntitlementFunding.$name" -c Release -o "publish/$name"
+            (cd "publish/$name" && zip -qr "../$name.zip" .)
+            az webapp deploy --resource-group "$RG_NAME" --name "$app" \
+              --src-path "publish/$name.zip" --type zip
+          done
+
+          echo "Web URL: $(terraform -chdir="$TF_DIR" output -raw web_url)" >> "$GITHUB_STEP_SUMMARY"
 
       - name: Close backend network access
         if: ${{ always() && steps.unlock-state.outcome != 'skipped' && steps.bootstrap-tf.outcome == 'success' && steps.runner-ip.outcome == 'success' }}
