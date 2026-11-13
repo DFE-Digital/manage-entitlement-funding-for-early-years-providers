@@ -106,7 +106,9 @@ deployment; and is unrelated to the browser's Basic Auth password.
 
 The API is not protected by the browser's Basic Auth header. In development it
 retains the existing signed development JWT validation. Its App Service ingress rules allow
-the Web app's outbound IPv4 addresses and deny other callers. These addresses
+the Web app's full possible outbound IPv4 pool and deny other callers. The
+current outbound list alone did not cover the observed source address in a
+development deployment. These addresses
 can be shared with other Azure apps, so the allowlist supplements authentication;
 it is not proof of caller identity or a private-network boundary.
 

@@ -69,7 +69,7 @@ resource "azurerm_linux_web_app" "api" {
     scm_ip_restriction_default_action = "Allow"
 
     dynamic "ip_restriction" {
-      for_each = azurerm_linux_web_app.web.outbound_ip_address_list
+      for_each = azurerm_linux_web_app.web.possible_outbound_ip_address_list
       content {
         name       = "web-outbound-${ip_restriction.key}"
         ip_address = "${ip_restriction.value}/32"

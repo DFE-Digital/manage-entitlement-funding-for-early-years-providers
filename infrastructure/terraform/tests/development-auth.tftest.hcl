@@ -9,6 +9,15 @@ variables {
 run "development_creates_key_and_settings" {
   command = plan
 
+  override_resource {
+    target          = azurerm_linux_web_app.web
+    override_during = plan
+    values = {
+      outbound_ip_address_list          = ["192.0.2.1"]
+      possible_outbound_ip_address_list = ["192.0.2.1", "192.0.2.2"]
+    }
+  }
+
   variables {
     environment                     = "development"
     development_basic_auth_password = "test-only-basic-auth-password-with-at-least-32-characters"
@@ -30,6 +39,16 @@ run "development_creates_key_and_settings" {
       azurerm_linux_web_app.api.site_config[0].health_check_eviction_time_in_min == 10
     )
     error_message = "Development must configure both the API health-check path and its required eviction time."
+  }
+
+  assert {
+    condition = (
+      toset([for rule in azurerm_linux_web_app.api.site_config[0].ip_restriction : rule.ip_address]) ==
+      toset(["192.0.2.1/32", "192.0.2.2/32"]) &&
+      alltrue([for rule in azurerm_linux_web_app.api.site_config[0].ip_restriction : rule.action == "Allow"]) &&
+      azurerm_linux_web_app.api.site_config[0].ip_restriction_default_action == "Deny"
+    )
+    error_message = "API ingress must allow the Web app's full possible outbound IPv4 pool and deny other callers."
   }
 }
 
