@@ -69,6 +69,28 @@ We will likely have to implement a CMS in the end anyway, as the Local Authoriti
 
 We can take inspiration from the existing DfE team ([EY Quals Repo](https://github.com/DFE-Digital/check-an-early-years-qualification)) to speed up dev set up. For example, the [HyperLinkRenderer.cs](https://github.com/DFE-Digital/check-an-early-years-qualification/blob/main/src/Dfe.EarlyYearsQualification.Content/RichTextParsing/Renderers/HyperlinkRenderer.cs) just wraps an existing `<a ... />` from Contentful with the Government class. We will be using the same Government components so we can use the same definitions. 
 
+### What content is likely to change
+
+- The submission deadline dates every year going forwards
+- Descriptions that explain more information around a questions
+- Intro screen explanation
+- Headings
+- Order of questions
+- Wording of question
+- Order of answers
+- Wording of answers
+- Number of answers
+- Table headings / structure when viewing submissions / children
+
+### What content is not likely to use Contentful to change
+
+- Submission process
+- Number of questions - by the time the team is happy to start development due to enough design and user research iterations, the core form shouldn't change too much
+- Sign in logic
+- Eligibility checker logic
+- Consumables / extra charges - will change through the Provider Admin settings instead
+- Provider sign up
+
 ## Consequences
 
 Devs will need to spend time setting up a new Contentful instance, including learning how it works, and creating tickets to document the work
