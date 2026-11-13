@@ -23,6 +23,10 @@ lint-markdown:
     npm --prefix docs ci --ignore-scripts
     npm --prefix docs run lint
 
+lint-markdown-fix:
+    npm --prefix docs ci --ignore-scripts
+    npm --prefix docs run lint -- --fix
+
 run project="Web":
     dotnet {{ if project == "Web" { "watch" } else { "run" } }} --project "src/Dfe.ManageEntitlementFunding.{{project}}" {{ if project == "Web" { "run" } else { "" } }} --launch-profile https
 
