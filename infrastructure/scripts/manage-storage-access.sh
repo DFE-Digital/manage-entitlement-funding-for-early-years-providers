@@ -19,19 +19,6 @@ case "$ENABLE_ACCESS" in
       --resource-group "$RESOURCE_GROUP_NAME" \
       --public-network-access Enabled --output none
 
-    for attempt in {1..18}; do
-      if az storage blob list \
-        --account-name "$STORAGE_ACCOUNT_NAME" \
-        --container-name tfstate --num-results 1 \
-        --auth-mode login --output none; then
-        echo "Terraform state blob listing is accessible."
-        exit 0
-      fi
-      echo "Waiting for storage firewall and role assignment propagation ($attempt/18)..."
-      sleep 10
-    done
-    echo "Error: Cannot list blobs in the Terraform state container." >&2
-    exit 1
     ;;
   false)
     echo "Disabling public state access..."

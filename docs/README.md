@@ -23,6 +23,6 @@ This project follows a Documentation as Code approach. The documentation is:
 The documentation is organised using the **Diátaxis framework**, which splits documentation into four clear, user-focused categories:
 
 1. [Tutorials](/tutorials/) - Learning-oriented step-by-step tutorials to get up and running.
-2. How-to guides - Practical, problem-oriented guides for executing daily tasks and runbooks.
+2. [How-to guides](/how-to/) - Practical, problem-oriented guides for executing daily tasks and runbooks.
 3. [Reference](/reference/) - Accurate, information-oriented reference material, including architecture blueprints, decisions, configurations, and test reports.
 4. Explanation - Understanding-oriented deep dives into our design process, branching strategy, and testing philosophy.

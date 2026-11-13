@@ -532,11 +532,34 @@
       "dfe.manageentitlementfunding.domain": {
         "type": "Project"
       },
+      "dfe.manageentitlementfunding.web": {
+        "type": "Project",
+        "dependencies": {
+          "Dfe.ManageEntitlementFunding.Contracts": "[1.0.0, )",
+          "GovUk.Frontend.AspNetCore": "[5.1.0, )",
+          "Microsoft.AspNetCore.Authentication.OpenIdConnect": "[10.0.14, )"
+        }
+      },
+      "GovUk.Frontend.AspNetCore": {
+        "type": "CentralTransitive",
+        "requested": "[5.1.0, )",
+        "resolved": "5.1.0",
+        "contentHash": "qnTl5NKMJFziTehnsm3Khw1imn5yfNeKWB7m4wD+KOZc32JeyQw31Da7A1hJvfLkvxTi28ppi4muWGzAupZd4A=="
+      },
       "Microsoft.AspNetCore.Authentication.JwtBearer": {
         "type": "CentralTransitive",
         "requested": "[10.0.14, )",
         "resolved": "10.0.14",
         "contentHash": "DaTs32NtRkTabidrvhLhcXpa+Uguw0rN5FaX8Q1HmzbYtcI72iSauYlN4WmqbrXp6QQoB8fmZlHk5/bjiMTY7A==",
+        "dependencies": {
+          "Microsoft.IdentityModel.Protocols.OpenIdConnect": "8.19.2"
+        }
+      },
+      "Microsoft.AspNetCore.Authentication.OpenIdConnect": {
+        "type": "CentralTransitive",
+        "requested": "[10.0.14, )",
+        "resolved": "10.0.14",
+        "contentHash": "W5g9xaWjPudw7GNwxCqP9uLxpwE1+LkRf4f8i0aF6Ga1AY3qU2UvBa4+41Opz15sO5oTCLwYYXcvb477Ry8NZQ==",
         "dependencies": {
           "Microsoft.IdentityModel.Protocols.OpenIdConnect": "8.19.2"
         }
