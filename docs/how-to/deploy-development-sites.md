@@ -12,6 +12,13 @@ Use this guide to configure the persistent development site and disposable
 internal PR sites. Use synthetic data only. For the configuration model and
 security limits, see the [development deployment reference](../reference/development-deployments.md).
 
+## Azure Prerequisites
+
+- A subscription to deploy into
+- The following resource providers registered in the subscription:
+  - Microsoft.Web
+- An app registration configured to allow OIDC access from GitHub
+
 ## Configure deployment access
 
 1. In the repository's **Settings > Environments > development**, configure:
