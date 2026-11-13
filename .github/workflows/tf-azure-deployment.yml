@@ -163,7 +163,7 @@ jobs:
             dotnet publish "src/Dfe.ManageEntitlementFunding.$name" -c Release -o "publish/$name"
             (cd "publish/$name" && zip -qr "../$name.zip" .)
             az webapp deploy --resource-group "$RG_NAME" --name "$app" \
-              --src-path "publish/$name.zip" --type zip
+              --src-path "publish/$name.zip" --type zip --async true --clean true
           done
 
           echo "Web URL: $(terraform -chdir="$TF_DIR" output -raw web_url)" >> "$GITHUB_STEP_SUMMARY"
