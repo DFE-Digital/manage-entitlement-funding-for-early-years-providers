@@ -14,11 +14,11 @@ runs:
       uses: actions/setup-dotnet@v6
       with:
         dotnet-version: ${{ inputs.dotnet_version }}
-        
+
     - name: Set up just
       uses: extractions/setup-just@v3
       with:
-        just-version: '1.59.0'
+        just-version: "1.59.0"
 
     - name: Install dependencies
       shell: bash
