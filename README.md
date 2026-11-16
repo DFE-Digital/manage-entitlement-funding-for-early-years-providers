@@ -23,6 +23,8 @@ The documentation site covers:
 
 - [Getting Started Guide](https://dfe-digital.github.io/manage-entitlement-funding-for-early-years-providers/tutorials/getting-started/).
 - [Architecture decisions](docs/reference/decisions/README.md).
+- [Development deployment how-to](docs/how-to/deploy-development-sites.md).
+- [Development deployment reference](docs/reference/development-deployments.md).
 
 ### Previewing the documentation
 
