@@ -21,7 +21,15 @@ build-docs:
 
 lint-markdown:
     npm --prefix docs ci --ignore-scripts
-    npm --prefix docs run lint
+    npm --prefix docs run lint:md
+
+lint-yaml:
+    npm --prefix docs ci --ignore-scripts
+    npm --prefix docs run lint:yaml
+
+lint-yaml-fix:
+    npm --prefix docs ci --ignore-scripts
+    npm --prefix docs run lint:yaml:fix
 
 run project="Web":
     dotnet {{ if project == "Web" { "watch" } else { "run" } }} --project "src/Dfe.ManageEntitlementFunding.{{project}}" {{ if project == "Web" { "run" } else { "" } }} --launch-profile https
