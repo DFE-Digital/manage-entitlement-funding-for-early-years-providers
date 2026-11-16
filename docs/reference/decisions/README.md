@@ -32,6 +32,7 @@ There is an [ADR template](0000-template.md) that can be copied.
 * [ADR-0017: Publish technical documentation](0017-publish-technical-documentation.md)
 * [ADR-0018: Bootstrap Terraform state storage using Bicep](0018-bootstrap-terraform-with-bicep.md)
 * [ADR-0019: Use ephemeral environments for full-stack testing](0019-ephemeral-environments.md)
+* [ADR-0020: Protect development and test sites with HTTP Basic Auth](0020-development-site-basic-auth.md)
 
 ## When to create an ADR
 
