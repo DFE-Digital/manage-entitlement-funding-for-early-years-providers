@@ -5,6 +5,11 @@ using Microsoft.IdentityModel.Tokens;
 
 var builder = WebApplication.CreateBuilder(args);
 
+if (!builder.Environment.IsDevelopment() && builder.Configuration["DevelopmentJwt:SigningKey"] is not null)
+{
+    throw new InvalidOperationException("DevelopmentJwt:SigningKey must not be configured outside Development.");
+}
+
 builder.Services.AddHttpContextAccessor();
 
 // Prevent default claim remapping

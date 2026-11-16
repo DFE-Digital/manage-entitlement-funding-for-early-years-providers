@@ -44,6 +44,10 @@ export default function (eleventyConfig) {
           href: '/tutorials/'
         },
         {
+          text: 'How-to guides',
+          href: '/how-to/'
+        },
+        {
           text: 'Reference',
           href: '/reference/'
         }
