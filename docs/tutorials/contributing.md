@@ -74,8 +74,10 @@ after installing dependencies:
 
 ```shell
 npm --prefix docs run lint:md:fix
-npm --prefix docs run lint:yaml:fix
+just lint-yaml-fix
 ```
+
+The YAML fix command installs its dependencies before applying fixes.
 
 Some errors require manual fixes. The rules in the root
 `.markdownlint.json` are also used by the VS Code
