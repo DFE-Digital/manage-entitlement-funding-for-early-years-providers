@@ -11,7 +11,7 @@ manage-entitlement-funding-for-early-years-providers/
 ├─ docs/ -- Technical documentation, including architecture decisions under reference/decisions/
 ├─ prototypes/ -- Proofs of concept and prototype implementations
 ├─ src/
-├─ terraform/ - Terraform project used to implement the Azure infrastructure as code.
+├─ infrastructure/ -- Bicep Terraform-backend bootstrap and Terraform configuration.
 ├─ tests/
 ```
 

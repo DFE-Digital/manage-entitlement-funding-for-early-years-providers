@@ -1,0 +1,16 @@
+{
+  "resourcePrefix": { "value": "s297d01" },
+  "serviceCode": { "value": "eyentitlementfunding" },
+  "location": { "value": "uksouth" },
+  "locationShortCode": { "value": "uks" },
+  "vnetAddressPrefix": { "value": "10.1.0.0/16" },
+  "subnetAddressPrefix": { "value": "10.1.0.0/24" },
+  "tags": {
+    "value": {
+      "Environment": "development",
+      "Source": "bicep",
+      "Product": "Manage Entitlement Funding for Early Years Providers",
+      "Service Offering": "Manage Entitlement Funding for Early Years Providers"
+    }
+  }
+}
