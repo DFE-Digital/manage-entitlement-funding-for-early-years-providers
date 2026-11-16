@@ -44,7 +44,7 @@ security limits, see the [development deployment reference](../reference/develop
 4. Access the web site and use HTTP basic auth for the initial gate.
 5. Afterwards, log in via application-level security (at time of writing, a mock DfE sign-in)
 
-Closing a PR removes an ephmeral PR instance. The site deployed from `main` is never
+Closing a PR removes an ephemeral PR instance. The site deployed from `main` is never
 torn down.
 
 ## Rotate the shared site password
