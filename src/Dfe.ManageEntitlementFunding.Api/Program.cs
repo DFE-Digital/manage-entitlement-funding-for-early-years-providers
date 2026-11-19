@@ -1,6 +1,9 @@
 using System.IdentityModel.Tokens.Jwt;
 using System.Text;
+using Dfe.ManageEntitlementFunding.Api.Data;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.Diagnostics.HealthChecks;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -55,7 +58,11 @@ builder.Services.SetUpApplication();
 
 builder.Services.AddControllers();
 builder.Services.AddOpenApi();
-builder.Services.AddHealthChecks();
+builder.Services.AddDbContext<FundingDbContext>(options =>
+    options.UseSqlServer(builder.Configuration.GetConnectionString("Funding")
+        ?? throw new InvalidOperationException("ConnectionStrings:Funding must be configured.")));
+builder.Services.AddHealthChecks()
+    .AddDbContextCheck<FundingDbContext>("database", tags: ["ready"]);
 
 var app = builder.Build();
 
@@ -66,7 +73,14 @@ app.UseAuthentication();
 app.UseAuthorization();
 
 app.MapControllers();
-app.MapHealthChecks("/health");
+app.MapHealthChecks("/health", new HealthCheckOptions
+{
+    Predicate = _ => false
+});
+app.MapHealthChecks("/health/ready", new HealthCheckOptions
+{
+    Predicate = registration => registration.Tags.Contains("ready")
+});
 
 if (app.Environment.IsDevelopment())
 {

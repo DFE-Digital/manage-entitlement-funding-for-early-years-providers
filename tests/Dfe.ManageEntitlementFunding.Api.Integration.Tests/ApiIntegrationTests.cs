@@ -5,9 +5,16 @@ using System.Net.Http.Json;
 using System.Security.Claims;
 using System.Text;
 using System.Text.Json;
+using Dfe.ManageEntitlementFunding.Api.Data;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc.Testing;
+using Microsoft.AspNetCore.TestHost;
+using Microsoft.Data.Sqlite;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.DependencyInjection.Extensions;
 using Microsoft.IdentityModel.Tokens;
 
 namespace Dfe.ManageEntitlementFunding.Api.Integration.Tests;
@@ -28,6 +35,39 @@ public sealed class ApiIntegrationTests
 
         Assert.AreEqual(HttpStatusCode.OK, response.StatusCode);
         Assert.AreEqual("Healthy", await response.Content.ReadAsStringAsync());
+    }
+
+    [TestMethod]
+    public async Task GetReadiness_WithAvailableDatabase_ReturnsHealthy()
+    {
+        await using var connection = new SqliteConnection("Data Source=:memory:");
+        await connection.OpenAsync();
+        await using var baseFactory = new WebApplicationFactory<Program>();
+        await using var factory = CreateFactory(baseFactory, connection);
+        using var client = factory.CreateClient();
+
+        using var response = await client.GetAsync("/health/ready");
+
+        Assert.AreEqual(HttpStatusCode.OK, response.StatusCode);
+        Assert.AreEqual("Healthy", await response.Content.ReadAsStringAsync());
+    }
+
+    [TestMethod]
+    public async Task GetReadiness_WithUnavailableDatabase_ReturnsUnhealthyButLivenessIsHealthy()
+    {
+        await using var connection = new SqliteConnection(
+            $"Data Source={Path.Combine(Path.GetTempPath(), $"{Guid.NewGuid():N}.db")};Mode=ReadWrite");
+        await using var baseFactory = new WebApplicationFactory<Program>();
+        await using var factory = CreateFactory(baseFactory, connection);
+        using var client = factory.CreateClient();
+
+        using var readiness = await client.GetAsync("/health/ready");
+        using var liveness = await client.GetAsync("/health");
+
+        Assert.AreEqual(HttpStatusCode.ServiceUnavailable, readiness.StatusCode);
+        Assert.AreEqual("Unhealthy", await readiness.Content.ReadAsStringAsync());
+        Assert.AreEqual(HttpStatusCode.OK, liveness.StatusCode);
+        Assert.AreEqual("Healthy", await liveness.Content.ReadAsStringAsync());
     }
 
     [TestMethod]
@@ -54,7 +94,8 @@ public sealed class ApiIntegrationTests
         Assert.IsEmpty(providers);
     }
 
-    private static WebApplicationFactory<Program> CreateFactory(WebApplicationFactory<Program> baseFactory) =>
+    private static WebApplicationFactory<Program> CreateFactory(
+        WebApplicationFactory<Program> baseFactory, SqliteConnection? connection = null) =>
         baseFactory.WithWebHostBuilder(builder =>
         {
             builder.UseEnvironment("Development");
@@ -63,6 +104,22 @@ public sealed class ApiIntegrationTests
                 {
                     ["DevelopmentJwt:SigningKey"] = SigningKey
                 }));
+            builder.ConfigureTestServices(services =>
+            {
+                services.RemoveAll<DbContextOptions<FundingDbContext>>();
+                services.RemoveAll<IDbContextOptionsConfiguration<FundingDbContext>>();
+                services.AddDbContext<FundingDbContext>(options =>
+                {
+                    if (connection is not null)
+                    {
+                        options.UseSqlite(connection);
+                    }
+                    else
+                    {
+                        options.UseSqlite("Data Source=:memory:");
+                    }
+                });
+            });
         });
 
     private static string CreateAccessToken()

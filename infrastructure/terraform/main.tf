@@ -84,7 +84,8 @@ resource "azurerm_linux_web_app" "api" {
   }
 
   app_settings = merge({
-    ASPNETCORE_ENVIRONMENT = local.aspnetcore_environment
+    ASPNETCORE_ENVIRONMENT     = local.aspnetcore_environment
+    ConnectionStrings__Funding = "Server=tcp:${azurerm_mssql_server.application.fully_qualified_domain_name},1433;Database=${azurerm_mssql_database.application.name};User ID=${azurerm_mssql_server.application.administrator_login};Password=${random_password.sql_admin.result};Encrypt=True;TrustServerCertificate=False;Connection Timeout=15;"
   }, local.development_jwt_settings)
 }
 
