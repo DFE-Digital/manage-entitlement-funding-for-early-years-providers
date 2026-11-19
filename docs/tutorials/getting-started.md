@@ -17,6 +17,28 @@ In the root folder open the IDE. (VS Code will work. Extensions are recommended 
 with this repository: C#, C# Dev Kit, GitHub Actions, HashiCorp Terraform, Red Hat XML, Red
 Hat YAML, David Anson's markdownlint.)
 
+## VS Code Dev Container
+
+With Docker and the VS Code Dev Containers extension installed, open the repository in VS
+Code and select **Reopen in Container**. The container installs the required .NET and Node.js
+versions, restores the solution, and creates a local development signing key for both apps.
+
+Start the API and web app in separate terminals from the repository root:
+
+```shell
+ASPNETCORE_URLS=http://0.0.0.0:5095 dotnet run --no-launch-profile --project src/Dfe.ManageEntitlementFunding.Api
+```
+
+```shell
+ASPNETCORE_URLS=http://0.0.0.0:5286 dotnet run --no-launch-profile --project src/Dfe.ManageEntitlementFunding.Web
+```
+
+Open <http://localhost:5286> to use the web app. Run the tests from the repository root with:
+
+```shell
+dotnet test Dfe.ManageEntitlementFunding.slnx
+```
+
 ## Prerequisites
 
 - .NET 10 SDK - for building and running the apps

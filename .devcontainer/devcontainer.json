@@ -1,0 +1,47 @@
+{
+  "name": "Manage entitlement funding for early-years providers",
+  "build": {
+    "dockerfile": "Dockerfile"
+  },
+  "features": {
+    "ghcr.io/devcontainers/features/dotnet:2": {
+      "version": "10.0.403"
+    },
+    "ghcr.io/devcontainers/features/node:1": {
+      "version": "24"
+    },
+    "ghcr.io/schlich/devcontainer-features/just:0": {
+      "version": "1.59.0"
+    }
+  },
+  "containerEnv": {
+    "ASPNETCORE_ENVIRONMENT": "Development",
+    "ApiBaseUrl": "http://localhost:5095",
+    "AllowedOrigins__0": "http://localhost:5286"
+  },
+  "postCreateCommand": "bash .devcontainer/post-create.sh",
+  "forwardPorts": [5286, 5095],
+  "portsAttributes": {
+    "5286": {
+      "label": "Web app",
+      "onAutoForward": "openBrowser"
+    },
+    "5095": {
+      "label": "API",
+      "onAutoForward": "notify"
+    }
+  },
+  "customizations": {
+    "vscode": {
+      "extensions": [
+        "ms-dotnettools.csdevkit",
+        "ms-dotnettools.csharp",
+        "github.vscode-github-actions",
+        "hashicorp.terraform",
+        "redhat.vscode-xml",
+        "redhat.vscode-yaml",
+        "DavidAnson.vscode-markdownlint"
+      ]
+    }
+  }
+}
