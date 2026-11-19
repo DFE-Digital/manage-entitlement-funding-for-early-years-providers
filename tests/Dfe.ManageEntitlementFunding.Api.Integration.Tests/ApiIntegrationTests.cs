@@ -20,16 +20,16 @@ public sealed class ApiIntegrationTests
     [TestMethod]
     public async Task GetMyProviders_WithValidToken_ReturnsSuccessAndEmptyList()
     {
-        await using var factory = new WebApplicationFactory<Program>()
-            .WithWebHostBuilder(builder =>
-            {
-                builder.UseEnvironment("Development");
-                builder.ConfigureAppConfiguration((_, configuration) =>
-                    configuration.AddInMemoryCollection(new Dictionary<string, string?>
-                    {
-                        ["DevelopmentJwt:SigningKey"] = SigningKey
-                    }));
-            });
+        await using var baseFactory = new WebApplicationFactory<Program>();
+        await using var factory = baseFactory.WithWebHostBuilder(builder =>
+        {
+            builder.UseEnvironment("Development");
+            builder.ConfigureAppConfiguration((_, configuration) =>
+                configuration.AddInMemoryCollection(new Dictionary<string, string?>
+                {
+                    ["DevelopmentJwt:SigningKey"] = SigningKey
+                }));
+        });
 
         using var client = factory.CreateClient(new WebApplicationFactoryClientOptions
         {
