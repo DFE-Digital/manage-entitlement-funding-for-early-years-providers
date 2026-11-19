@@ -19,9 +19,22 @@ Hat YAML, David Anson's markdownlint.)
 
 ## VS Code Dev Container
 
-With Docker and the VS Code Dev Containers extension installed, open the repository in VS
-Code and select **Reopen in Container**. The container installs the required .NET and Node.js
+With Docker and the VS Code Dev Containers extension installed, first create an ignored
+`.devcontainer/.env` file containing `MSSQL_SA_PASSWORD=<your-local-password>`. Use a unique
+local-only password of at least 16 characters, with uppercase, lowercase, digits and symbols.
+Avoid `$`, `;` and quotation marks because the value is also used in a connection string.
+Do not commit this file or reuse a real service credential.
+
+Open the repository in VS Code and select **Reopen in Container**.
+Docker Compose starts SQL Server 2022 Developer edition, waits for it to be healthy, and
+creates the `Funding` database before starting the development container. SQL Server needs
+an x86-64 Docker host and at least 2 GB of memory. Its port is not exposed on the host.
+The container installs the required .NET and Node.js
 versions, restores the solution, and creates a local development signing key for both apps.
+
+The API connection string is supplied automatically through `ConnectionStrings__Funding`.
+SQL data persists in the Compose `sql-data` volume across container rebuilds. Keep the same
+local password when reusing that volume.
 
 Start the API and web app in separate terminals from the repository root:
 
@@ -38,6 +51,12 @@ Open <http://localhost:5286> to use the web app. Run the tests from the reposito
 ```shell
 dotnet test Dfe.ManageEntitlementFunding.slnx
 ```
+
+The API exposes `/health` for liveness (no dependency checks) and `/health/ready` for
+readiness. Readiness returns `200 Healthy` when EF Core can connect to the database,
+or `503 Unhealthy` otherwise, without exposing connection details.
+It does not create schema or apply migrations. Integration tests substitute SQLite and
+do not require Docker or SQL Server.
 
 ## Prerequisites
 
@@ -139,6 +158,18 @@ export SSL_CERT_DIR="$HOME/.aspnet/dev-certs/trust:/usr/lib/ssl/certs"
 ```
 
 Browsers may need further setup; see the [.NET Linux trust guidance](https://aka.ms/dev-certs-trust).
+
+When running outside the devcontainer, provision a local SQL Server database and set
+the API's `ConnectionStrings:Funding` user secret to its connection string:
+
+```shell
+dotnet user-secrets set "ConnectionStrings:Funding" "<your-local-sql-connection-string>" --project src/Dfe.ManageEntitlementFunding.Api
+```
+
+Use the `Funding` database, encryption, and credentials for your local SQL instance.
+`TrustServerCertificate=True` is appropriate only for a local development server with a
+self-signed certificate. The connection string is required for database access and readiness;
+the existing provider endpoints remain unchanged.
 
 ### Building and testing
 
