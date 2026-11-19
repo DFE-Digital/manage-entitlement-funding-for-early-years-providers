@@ -5,9 +5,19 @@ export ELEVENTY_ENV := "production"
 restore:
     dotnet restore Dfe.ManageEntitlementFunding.slnx
 
-init signing_key: restore
+init signing_key: restore && trust-dev-cert
     @dotnet user-secrets set "DevelopmentJwt:SigningKey" "{{signing_key}}" --project src/Dfe.ManageEntitlementFunding.Api
     @dotnet user-secrets set "DevelopmentJwt:SigningKey" "{{signing_key}}" --project src/Dfe.ManageEntitlementFunding.Web
+
+# On Linux, dev-certs exits 4 when the certificate is only trusted by some
+# clients (e.g. SSL_CERT_DIR not configured); treat that as a warning.
+[linux]
+trust-dev-cert:
+    @dotnet dev-certs https --trust || { code=$?; if [ "$code" -ne 4 ]; then exit "$code"; fi; echo "WARN: HTTPS development certificate is only partially trusted; see https://aka.ms/dev-certs-trust"; }
+
+[macos]
+[windows]
+trust-dev-cert:
     dotnet dev-certs https --trust
 
 build configuration="Debug": restore (build-app configuration) build-docs

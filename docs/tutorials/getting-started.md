@@ -130,6 +130,16 @@ just init "$(node -p "require('node:crypto').randomBytes(32).toString('base64')"
 This command also trusts the development HTTPS certificate, which may require
 confirmation or platform-specific setup; see the [.NET HTTPS documentation](https://learn.microsoft.com/aspnet/core/security/enforcing-ssl#trust-the-aspnet-core-https-development-certificate).
 
+On Linux, trust is often only partial: `just init` prints a warning rather than failing. To
+have OpenSSL-based clients trust the certificate, add its directory to `SSL_CERT_DIR`, for
+example in your shell profile:
+
+```shell
+export SSL_CERT_DIR="$HOME/.aspnet/dev-certs/trust:/usr/lib/ssl/certs"
+```
+
+Browsers may need further setup; see the [.NET Linux trust guidance](https://aka.ms/dev-certs-trust).
+
 ### Building and testing
 
 After initialization:

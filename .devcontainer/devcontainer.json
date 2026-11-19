@@ -9,9 +9,6 @@
     },
     "ghcr.io/devcontainers/features/node:1": {
       "version": "24"
-    },
-    "ghcr.io/schlich/devcontainer-features/just:0": {
-      "version": "1.59.0"
     }
   },
   "containerEnv": {
