@@ -35,7 +35,7 @@ run "development_creates_key_and_settings" {
 
   assert {
     condition = (
-      azurerm_linux_web_app.api.site_config[0].health_check_path == "/openapi/v1.json" &&
+      azurerm_linux_web_app.api.site_config[0].health_check_path == "/health" &&
       azurerm_linux_web_app.api.site_config[0].health_check_eviction_time_in_min == 10
     )
     error_message = "Development must configure both the API health-check path and its required eviction time."
