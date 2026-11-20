@@ -62,7 +62,21 @@ automatic fixes at warning severity or higher.
 
 ## Markdown & Yaml formatting
 
-Repository markdown and yaml are linted in CI. To run locally, from the repository root run:
+In the repository root,...
+
+lint Markdown, YAML, and C# with
+
+```shell
+just lint
+```
+
+... and fix Markdown, YAML, and C# linting with
+
+```shell
+just lint-fix
+```
+
+To perform more specific linting, run from the repository root:
 
 ```shell
 just lint-markdown
