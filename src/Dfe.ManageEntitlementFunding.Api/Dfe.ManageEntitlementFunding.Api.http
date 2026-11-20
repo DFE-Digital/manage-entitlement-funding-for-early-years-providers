@@ -1,0 +1,7 @@
+@baseUrl = https://localhost:7168
+
+### Liveness (no dependency checks)
+GET {{baseUrl}}/health
+
+### Readiness (200 Healthy or 503 Unhealthy, depending on database connectivity)
+GET {{baseUrl}}/health/ready
