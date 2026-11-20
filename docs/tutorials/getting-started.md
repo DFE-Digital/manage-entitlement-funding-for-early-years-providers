@@ -17,6 +17,28 @@ In the root folder open the IDE. (VS Code will work. Extensions are recommended 
 with this repository: C#, C# Dev Kit, GitHub Actions, HashiCorp Terraform, Red Hat XML, Red
 Hat YAML, David Anson's markdownlint.)
 
+## VS Code Dev Container
+
+With Docker and the VS Code Dev Containers extension installed, open the repository in VS
+Code and select **Reopen in Container**. The container installs the required .NET and Node.js
+versions, restores the solution, and creates a local development signing key for both apps.
+
+Start the API and web app in separate terminals from the repository root:
+
+```shell
+ASPNETCORE_URLS=http://0.0.0.0:5095 dotnet run --no-launch-profile --project src/Dfe.ManageEntitlementFunding.Api
+```
+
+```shell
+ASPNETCORE_URLS=http://0.0.0.0:5286 dotnet run --no-launch-profile --project src/Dfe.ManageEntitlementFunding.Web
+```
+
+Open <http://localhost:5286> to use the web app. Run the tests from the repository root with:
+
+```shell
+dotnet test Dfe.ManageEntitlementFunding.slnx
+```
+
 ## Prerequisites
 
 - .NET 10 SDK - for building and running the apps
@@ -107,6 +129,16 @@ just init "$(node -p "require('node:crypto').randomBytes(32).toString('base64')"
 
 This command also trusts the development HTTPS certificate, which may require
 confirmation or platform-specific setup; see the [.NET HTTPS documentation](https://learn.microsoft.com/aspnet/core/security/enforcing-ssl#trust-the-aspnet-core-https-development-certificate).
+
+On Linux, trust is often only partial: `just init` prints a warning rather than failing. To
+have OpenSSL-based clients trust the certificate, add its directory to `SSL_CERT_DIR`, for
+example in your shell profile:
+
+```shell
+export SSL_CERT_DIR="$HOME/.aspnet/dev-certs/trust:/usr/lib/ssl/certs"
+```
+
+Browsers may need further setup; see the [.NET Linux trust guidance](https://aka.ms/dev-certs-trust).
 
 ### Building and testing
 
