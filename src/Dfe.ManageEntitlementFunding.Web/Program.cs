@@ -1,9 +1,15 @@
+using Dfe.ManageEntitlementFunding.Web;
 using Dfe.ManageEntitlementFunding.Web.Services;
 using GovUk.Frontend.AspNetCore;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Authentication.OpenIdConnect;
 
 var builder = WebApplication.CreateBuilder(args);
+
+if (!builder.Environment.IsDevelopment() && builder.Configuration["DevelopmentJwt:SigningKey"] is not null)
+{
+    throw new InvalidOperationException("DevelopmentJwt:SigningKey must not be configured outside Development.");
+}
 
 ConfigureAuthentication(builder);
 
@@ -61,6 +67,7 @@ if (!app.Environment.IsDevelopment())
 }
 
 app.UseHttpsRedirection();
+app.UseDevelopmentAuth();
 
 app.UseRouting();
 app.UseCors("AllowWebClient");

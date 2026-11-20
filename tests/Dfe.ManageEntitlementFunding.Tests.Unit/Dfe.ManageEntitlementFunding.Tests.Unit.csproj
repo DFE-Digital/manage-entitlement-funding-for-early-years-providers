@@ -13,6 +13,9 @@
   <ItemGroup>
     <ProjectReference
       Include="..\..\src\Dfe.ManageEntitlementFunding.Api\Dfe.ManageEntitlementFunding.Api.csproj" />
+    <ProjectReference
+      Include="..\..\src\Dfe.ManageEntitlementFunding.Web\Dfe.ManageEntitlementFunding.Web.csproj"
+      Aliases="Web" />
   </ItemGroup>
 
   <ItemGroup>
