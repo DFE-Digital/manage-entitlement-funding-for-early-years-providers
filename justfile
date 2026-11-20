@@ -5,19 +5,9 @@ export ELEVENTY_ENV := "production"
 restore:
     dotnet restore Dfe.ManageEntitlementFunding.slnx
 
-init signing_key: restore && trust-dev-cert
+init signing_key: restore
     @dotnet user-secrets set "DevelopmentJwt:SigningKey" "{{signing_key}}" --project src/Dfe.ManageEntitlementFunding.Api
     @dotnet user-secrets set "DevelopmentJwt:SigningKey" "{{signing_key}}" --project src/Dfe.ManageEntitlementFunding.Web
-
-# On Linux, dev-certs exits 4 when the certificate is only trusted by some
-# clients (e.g. SSL_CERT_DIR not configured); treat that as a warning.
-[linux]
-trust-dev-cert:
-    @dotnet dev-certs https --trust || { code=$?; if [ "$code" -ne 4 ]; then exit "$code"; fi; echo "WARN: HTTPS development certificate is only partially trusted; see https://aka.ms/dev-certs-trust"; }
-
-[macos]
-[windows]
-trust-dev-cert:
     dotnet dev-certs https --trust
 
 build configuration="Debug": restore (build-app configuration) build-docs
@@ -29,17 +19,24 @@ build-docs:
     npm --prefix docs ci --ignore-scripts
     npm --prefix docs run build
 
-lint-markdown:
+_docs-deps:
     npm --prefix docs ci --ignore-scripts
+
+lint-markdown: _docs-deps
     npm --prefix docs run lint:md
 
-lint-yaml:
-    npm --prefix docs ci --ignore-scripts
+lint-yaml: _docs-deps
     npm --prefix docs run lint:yaml
 
-lint-yaml-fix:
-    npm --prefix docs ci --ignore-scripts
+lint: _docs-deps
+    npm --prefix docs run lint:md
+    npm --prefix docs run lint:yaml
+    dotnet format Dfe.ManageEntitlementFunding.slnx --verify-no-changes
+
+lint-fix: _docs-deps
+    npm --prefix docs run lint:md:fix
     npm --prefix docs run lint:yaml:fix
+    dotnet format Dfe.ManageEntitlementFunding.slnx
 
 run project="Web":
     dotnet {{ if project == "Web" { "watch" } else { "run" } }} --project "src/Dfe.ManageEntitlementFunding.{{project}}" {{ if project == "Web" { "run" } else { "" } }} --launch-profile https
