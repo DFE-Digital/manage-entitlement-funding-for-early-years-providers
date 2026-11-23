@@ -39,6 +39,7 @@ We want to build the platform in a way that supports the needs of Content Design
 * **Positive:** Multiple people and roles can be set up if need be.
 * **Positive:** Decoupled from GitHub.
 * **Positive:** We have similar DfE projects we can reference. See [EY Quals Repo](https://github.com/DFE-Digital/check-an-early-years-qualification)
+* **Positive:** Handles translations if we need them.
 * **Negative:** Takes initial dev effort to build in.
 * **Negative:** Won't reduce burden from logical content changes such as changing the information collected by the forms
 * **Negative:** Hard to know right now how useful being able to change content is, and which content is likely to need changing
@@ -107,3 +108,5 @@ No consequences for dev work. No time needed to spike and implement a CMS for no
 May end up implementing CMS down the line anyway.
 
 Will need to decide on a solution for submitting term deadlines. Can decide this later on.
+
+Unlikely that we will need to support different translations, as it isn't every parent in the UK, but every provider, and one could assume that every Provider must be able to speak enough English to understand. If this isn't the case, we can consider it when making the deferred decision.
