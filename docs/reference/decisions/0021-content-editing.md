@@ -4,7 +4,7 @@ title: "ADR-0018: Content Editing"
 
 ## Status
 
-Proposed
+Accepted
 
 ## Context and problem statement
 
@@ -21,23 +21,27 @@ We want to build the platform in a way that supports the needs of Content Design
 
 ## Considered options
 
-### Option 1: Contentful headless CMS - implemented at Beta Private
+### Option 0: No CMS for now - defer decision
+
+* **Positive:** No time spent implementing CMS, at least initially.
+* **Positive:** Make decision when better informed.
+* **Positive:** Devs can start development sooner.
+* **Positive:** May end up with less work overall.
+* **Negative:** Makes some changes harder for content designers to make.
+* **Negative:** May end up more work down the line.
+
+### Option 1: Contentful headless CMS
 
 * **Positive:** Gov approved. Team already familiar.
-* **Positive:** Gives content people the power to make changes without relying on dev effort
+* **Positive:** Gives content people the power to make SOME changes without relying on dev effort
 * **Positive:** More lightweight than standard CMS like Umbraco.
 * **Positive:** Devs have control of how much freedom/restrictions to give editors.
 * **Positive:** Multiple people and roles can be set up if need be.
 * **Positive:** Decoupled from GitHub.
 * **Positive:** We have similar DfE projects we can reference. See [EY Quals Repo](https://github.com/DFE-Digital/check-an-early-years-qualification)
 * **Negative:** Takes initial dev effort to build in.
-
-### Option 1.5: Contentful headless CMS - implemented at Beta Public
-
-* **Positive:** Same as above.
-* **Positive:** Devs can focus on feature building sooner.
-* **Negative:** Takes initial dev effort to build in.
-* **Negative:** Blocks content designers from making changes easily
+* **Negative:** Won't reduce burden from logical content changes such as changing the information collected by the forms
+* **Negative:** Hard to know right now how useful being able to change content is, and which content is likely to need changing
 
 ### Option 2: Other headless CMS
 
@@ -58,13 +62,17 @@ We want to build the platform in a way that supports the needs of Content Design
 
 ## Decision outcome
 
-(Not yet) Chosen option: **Option 1:** Contentful headless CMS.
+Chosen option: **Option 0:** No CMS for now - defer decision
 
-From talking to the Content Designer, and a developer on another DfE team, it seems like changes are likely to be requested more often than initially expected for a transactional service. For this reason, we can reduce blockers for content designers by giving them their preferred interface.
+It is preferable to make a decision once we are better informed. This will come with time and experience, notably through rounds of user research. We can work using an iterative approach where we are able to change tact if and when the need occurs.
 
-We will likely have to implement a CMS in the end anyway, as the Local Authorities will need a way of inputting future term date deadlines, going forward throughout the years. If we need to spend effort implementing it at the end anyway, we may as well save effort and not implement a temporary, simpler system, earlier on. Build one good thing once, rather than build 2 systems.
+We also realised that a lot of the content changes require dev effort anyway. For example, if a content designer wants to add another question so we can collect more data, dev work is needed to implement storing this new piece of information. If a dev is already implementing the logical side of this change, altering the UI is minimal further effort.
 
-We can take inspiration from the existing DfE team ([EY Quals Repo](https://github.com/DFE-Digital/check-an-early-years-qualification)) to speed up dev set up. For example, the [HyperLinkRenderer.cs](https://github.com/DFE-Digital/check-an-early-years-qualification/blob/main/src/Dfe.EarlyYearsQualification.Content/RichTextParsing/Renderers/HyperlinkRenderer.cs) just wraps an existing `<a ... />` from Contentful with the Government class. We will be using the same Government components so we can use the same definitions.
+Similarly, simpler text-only content changes won't take a dev long to implement and release, especially if we build our pipelines so. Yes this adds friction for the content designer, but we decided seems worthwhile overall, when compared to the effort of implementing a CMS.
+
+The design will likely go through multiple rounds of iterations and changes over the next few months, so it seems like the devs will regularly be updating the form anyway. This minimises effort for the devs to be updating content. Approaching release deadlines, the design should converge into one stable layout, meaning minimal or no requests to change content.
+
+We will need to decide on some form of update mechanism going forwards, as the Local Authorities will need a way of inputting future term  deadlines over the years. We decided that to make this process more secure, it is best to handle this using some form of Admin UI where we can validate user actions, to ensure that something as important as deadline dates aren't entered incorrectly. For this reason, we decided a CMS isn't a good fit for this use case.
 
 ### What content is likely to change
 
@@ -90,8 +98,12 @@ We can take inspiration from the existing DfE team ([EY Quals Repo](https://gith
 
 ## Consequences
 
-Devs will need to spend time setting up a new Contentful instance, including learning how it works, and creating tickets to document the work
+Continue dev work as is, review semi-regularly to see if a need arises. Listen out for scenarios that may sway our decision relating to implementing a CMS.
 
-Content Designers (and anyone else identified) will be able to edit the web UI from really early on without having to wait for a later phase of the project
+Content designers will need to request changes via the devs. As mentioned, the devs will be actively making regular changes to the form anyway so results in minimal impact.
 
-Devs will have fewer distractions with no need to edit content once Contentful is in place
+No consequences for dev work. No time needed to spike and implement a CMS for now.
+
+May end up implementing CMS down the line anyway.
+
+Will need to decide on a solution for submitting term deadlines. Can decide this later on.
