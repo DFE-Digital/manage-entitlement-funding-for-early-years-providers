@@ -7,7 +7,7 @@ services:
       - ..:/workspaces/manage-entitlement-funding-for-early-years-providers:cached
     command: sleep infinity
     environment:
-      ConnectionStrings__Funding: "Server=db;Database=Funding;User ID=sa;Password=${MSSQL_SA_PASSWORD:?Set MSSQL_SA_PASSWORD in .devcontainer/.env};Encrypt=True;TrustServerCertificate=True"
+      ConnectionStrings__Funding: "Server=db;Database=Funding;User ID=sa;Password=${MSSQL_SA_PASSWORD:?Run sh .devcontainer/initialize.sh first};Encrypt=True;TrustServerCertificate=True"
     depends_on:
       db-init:
         condition: service_completed_successfully
@@ -17,9 +17,7 @@ services:
     environment:
       ACCEPT_EULA: "Y"
       MSSQL_PID: Developer
-      MSSQL_SA_PASSWORD: "${MSSQL_SA_PASSWORD:?Set MSSQL_SA_PASSWORD in .devcontainer/.env}"
-    volumes:
-      - sql-data:/var/opt/mssql
+      MSSQL_SA_PASSWORD: "${MSSQL_SA_PASSWORD:?Run sh .devcontainer/initialize.sh first}"
     healthcheck:
       test:
         - CMD-SHELL
@@ -32,7 +30,7 @@ services:
   db-init:
     image: mcr.microsoft.com/mssql/server:2022-latest
     environment:
-      SQLCMDPASSWORD: "${MSSQL_SA_PASSWORD:?Set MSSQL_SA_PASSWORD in .devcontainer/.env}"
+      SQLCMDPASSWORD: "${MSSQL_SA_PASSWORD:?Run sh .devcontainer/initialize.sh first}"
     depends_on:
       db:
         condition: service_healthy
@@ -46,6 +44,3 @@ services:
       - -b
       - -Q
       - "IF DB_ID(N'Funding') IS NULL CREATE DATABASE [Funding];"
-
-volumes:
-  sql-data:

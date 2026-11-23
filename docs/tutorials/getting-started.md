@@ -19,13 +19,13 @@ Hat YAML, David Anson's markdownlint.)
 
 ## VS Code Dev Container
 
-With Docker and the VS Code Dev Containers extension installed, first create an ignored
-`.devcontainer/.env` file containing `MSSQL_SA_PASSWORD=<your-local-password>`. Use a unique
-local-only password of at least 16 characters, with uppercase, lowercase, digits and symbols.
-Avoid `$`, `;` and quotation marks because the value is also used in a connection string.
-Do not commit this file or reuse a real service credential.
+With Docker, a POSIX shell (`sh`), OpenSSL and the VS Code Dev Containers extension installed
+on the host, open the repository in VS Code and select **Reopen in Container**.
+A host-side initialization hook generates a random SQL Server password in the ignored
+`.devcontainer/.env` file before the first build. Subsequent starts reuse that file.
+Do not commit it or delete it while reusing an existing SQL Server container.
+When using Docker Compose directly, run `sh .devcontainer/initialize.sh` first.
 
-Open the repository in VS Code and select **Reopen in Container**.
 Docker Compose starts SQL Server 2022 Developer edition, waits for it to be healthy, and
 creates the `Funding` database before starting the development container. SQL Server needs
 an x86-64 Docker host and at least 2 GB of memory. Its port is not exposed on the host.
@@ -33,8 +33,9 @@ The container installs the required .NET and Node.js
 versions, restores the solution, and creates a local development signing key for both apps.
 
 The API connection string is supplied automatically through `ConnectionStrings__Funding`.
-SQL data persists in the Compose `sql-data` volume across container rebuilds. Keep the same
-local password when reusing that volume.
+SQL data lives in the SQL Server container's writable layer; no database volume is required.
+It survives stop/start but is lost when that container is removed or recreated. Rebuilding
+only the development container does not necessarily recreate the SQL Server container.
 
 Start the API and web app in separate terminals from the repository root:
 
