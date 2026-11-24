@@ -15,8 +15,13 @@ security limits, see the [development deployment reference](../reference/develop
 ## Azure Prerequisites
 
 - A subscription to deploy into
-- The following resource providers registered in the subscription:
-  - Microsoft.Web
+- A deployment identity with permission to register resource providers at
+  subscription scope (`*/register/action`). Terraform registers the providers
+  listed in `resource_providers_to_register` in
+  `infrastructure/terraform/providers.tf` (currently `Microsoft.Web` and
+  `Microsoft.Sql`); add to that list when using a new Azure service. If the
+  identity lacks this permission, register them manually instead:
+  `az provider register --namespace <namespace> --wait`
 - Sufficient quota for required resources e.g. F1 VMs
   - You may need to request quota in order to nudge total regional quota
 - An app registration configured to allow OIDC access from GitHub

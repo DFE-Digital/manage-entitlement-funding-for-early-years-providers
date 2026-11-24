@@ -19,5 +19,9 @@ terraform {
 }
 
 provider "azurerm" {
+  # azurerm 5.x registers no resource providers by default; register only those we use.
+  resource_provider_registrations = "none"
+  resource_providers_to_register  = ["Microsoft.Sql", "Microsoft.Web"]
+
   features {}
 }
