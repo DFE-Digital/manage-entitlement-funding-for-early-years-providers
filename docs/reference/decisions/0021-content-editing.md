@@ -1,5 +1,5 @@
 ---
-title: "ADR-0018: Content Editing"
+title: "ADR-0021: Content Editing"
 ---
 
 ## Status
