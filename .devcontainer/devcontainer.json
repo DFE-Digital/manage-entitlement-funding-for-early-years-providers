@@ -1,8 +1,9 @@
 {
   "name": "Manage entitlement funding for early-years providers",
-  "build": {
-    "dockerfile": "Dockerfile"
-  },
+  "dockerComposeFile": "compose.yml",
+  "service": "devcontainer",
+  "workspaceFolder": "/workspaces/manage-entitlement-funding-for-early-years-providers",
+  "shutdownAction": "stopCompose",
   "features": {
     "ghcr.io/devcontainers/features/dotnet:2": {
       "version": "10.0.403"
@@ -16,6 +17,7 @@
     "ApiBaseUrl": "http://localhost:5095",
     "AllowedOrigins__0": "http://localhost:5286"
   },
+  "initializeCommand": ["sh", ".devcontainer/initialize.sh"],
   "postCreateCommand": "bash .devcontainer/post-create.sh",
   "forwardPorts": [5286, 5095],
   "portsAttributes": {

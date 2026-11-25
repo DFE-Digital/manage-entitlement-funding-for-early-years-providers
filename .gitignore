@@ -252,6 +252,7 @@ ServiceFabricBackup/
 *.rptproj.bak
 
 # SQL Server files
+.devcontainer/.env
 *.mdf
 *.ldf
 *.ndf

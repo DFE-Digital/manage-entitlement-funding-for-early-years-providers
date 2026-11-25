@@ -42,7 +42,7 @@ The Web and API apps share one Linux App Service plan per deployment. The defaul
 SKU is `F1`; the intention is to minimise costs. Free hosting has no SLA, no
 Always On, and a daily CPU quota per app.
 
-The development API uses `/openapi/v1.json` for App Service health checks, paired
+The development API uses `/health` for App Service health checks, paired
 with the provider-required 10-minute eviction setting. Free hosting supports
 health metrics but not unhealthy-instance replacement. Both health-check settings
 are omitted outside development.
@@ -56,6 +56,36 @@ charges.
 
 We can and should reconsider this if it proves inconvenient; but at the same time
 bear in mind that ephemeral deployments are not free.
+
+## Database and readiness
+
+Each deployment also provisions an Azure SQL logical server and a Basic-tier `Funding`
+database (2 GB). These incur charges independently of the free App Service plan and are
+removed with the deployment's application resource group.
+
+Terraform generates a separate SQL administrator password for each deployment and injects
+an encrypted, certificate-validated `ConnectionStrings__Funding` setting into the API
+only. This credential is sensitive Terraform state and App Service configuration: do not
+print it or export it to workflow outputs. The Web app has no direct database access.
+
+For these temporary deployments, the SQL firewall allows Azure services (`0.0.0.0`).
+This includes other Azure tenants, not just this deployment; SQL authentication is still
+required. There is no client-IP rule for direct developer access. Private networking,
+managed identity and a least-privilege application database user remain future deployment
+design work before using real data.
+
+The API uses EF Core's SQL Server provider. No domain tables or migrations are introduced
+yet, and startup does not create or migrate database schema.
+
+`/health` remains a dependency-free liveness check. `/health/ready` checks database
+connectivity through the application's EF context, returning `200 Healthy` or
+`503 Unhealthy` without connection details. Future required dependencies should join
+the `ready` health-check tag. These routes do not require a bearer token, but deployed
+API ingress restrictions still apply.
+
+The existing App Service probe remains on `/health`; no workflow, monitor or external
+caller for `/health/ready` is configured yet. How readiness will be called in deployment
+is a separate decision.
 
 ## Shared-password access gate
 
