@@ -1,5 +1,5 @@
 ---
-title: "ADR-0021: Use Azure SQL Database for relational persistence"
+title: "ADR-0022: Use Azure SQL Database for relational persistence"
 ---
 
 ## Status
