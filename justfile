@@ -29,17 +29,24 @@ build-docs:
     npm --prefix docs ci --ignore-scripts
     npm --prefix docs run build
 
-lint-markdown:
+_docs-deps:
     npm --prefix docs ci --ignore-scripts
+
+lint-markdown: _docs-deps
     npm --prefix docs run lint:md
 
-lint-yaml:
-    npm --prefix docs ci --ignore-scripts
+lint-yaml: _docs-deps
     npm --prefix docs run lint:yaml
 
-lint-yaml-fix:
-    npm --prefix docs ci --ignore-scripts
+lint: _docs-deps
+    npm --prefix docs run lint:md
+    npm --prefix docs run lint:yaml
+    dotnet format Dfe.ManageEntitlementFunding.slnx --verify-no-changes
+
+lint-fix: _docs-deps
+    npm --prefix docs run lint:md:fix
     npm --prefix docs run lint:yaml:fix
+    dotnet format Dfe.ManageEntitlementFunding.slnx
 
 run project="Web":
     dotnet {{ if project == "Web" { "watch" } else { "run" } }} --project "src/Dfe.ManageEntitlementFunding.{{project}}" {{ if project == "Web" { "run" } else { "" } }} --launch-profile https
