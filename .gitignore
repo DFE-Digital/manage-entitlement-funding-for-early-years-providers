@@ -169,6 +169,9 @@ DocProject/Help/html
 # Click-Once directory
 publish/
 
+# Build outputs
+*.feature.cs
+
 # Publish Web Output
 *.[Pp]ublish.xml
 *.azurePubxml
