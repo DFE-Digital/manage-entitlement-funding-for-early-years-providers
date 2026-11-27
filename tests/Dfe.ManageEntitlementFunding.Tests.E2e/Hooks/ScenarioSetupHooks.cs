@@ -36,6 +36,9 @@ internal sealed class ScenarioSetupHooks(
             scenarioContext.ScenarioInfo.Title);
 
         var browserContext = await browser.NewContextAsync(contextOptions);
+        browserContext.SetDefaultTimeout(5_000);
+        browserContext.SetDefaultNavigationTimeout(5_000);
+
         var page = await browserContext.NewPageAsync();
 
         page.Response += (_, response) =>

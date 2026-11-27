@@ -561,6 +561,15 @@
           "Microsoft.Testing.Platform": "[2.5.3, 3.0.0)"
         }
       },
+      "Microsoft.Testing.Extensions.TrxReport": {
+        "type": "Transitive",
+        "resolved": "2.5.3",
+        "contentHash": "g+iSRKedpiZ9Kpkum1wJ3jWTeZhL+V/kmFHFT9IRhWDDZDSNPIlQCwS0kvn4f6NYtLHNUHdZLLqJ8lzi/ZEktg==",
+        "dependencies": {
+          "Microsoft.Testing.Extensions.TrxReport.Abstractions": "2.5.3",
+          "Microsoft.Testing.Platform": "[2.5.3, 3.0.0)"
+        }
+      },
       "Microsoft.Testing.Extensions.TrxReport.Abstractions": {
         "type": "Transitive",
         "resolved": "2.5.3",
@@ -821,16 +830,6 @@
         "dependencies": {
           "Microsoft.CodeCoverage": "18.10.2",
           "Microsoft.TestPlatform.TestHost": "18.10.2"
-        }
-      },
-      "Microsoft.Testing.Extensions.TrxReport": {
-        "type": "CentralTransitive",
-        "requested": "[2.5.3, )",
-        "resolved": "2.5.3",
-        "contentHash": "g+iSRKedpiZ9Kpkum1wJ3jWTeZhL+V/kmFHFT9IRhWDDZDSNPIlQCwS0kvn4f6NYtLHNUHdZLLqJ8lzi/ZEktg==",
-        "dependencies": {
-          "Microsoft.Testing.Extensions.TrxReport.Abstractions": "2.5.3",
-          "Microsoft.Testing.Platform": "[2.5.3, 3.0.0)"
         }
       }
     }

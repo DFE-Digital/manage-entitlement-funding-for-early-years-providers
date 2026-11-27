@@ -11,9 +11,21 @@ internal sealed class LoginSteps(IPage page, TestSettings settings)
     [When("I enter the developer log in details")]
     public async Task WhenIEnterTheDeveloperLogInDetails()
     {
-        await page.GetByRole(AriaRole.Textbox, new PageGetByRoleOptions { Name =  new Regex("Subject ID").ToString() }).FillAsync("user-123");
-        await page.GetByRole(AriaRole.Textbox, new PageGetByRoleOptions { Name = "User Full Name" }).FillAsync("Jane Doe");
-        await page.GetByRole(AriaRole.Textbox, new PageGetByRoleOptions { Name = "Email Address" }).FillAsync("Jane.Doe@example.gov.uk");
+        await page.GetByLabel(new Regex("Subject ID").ToString()).FillAsync("user-123");
+        await page.GetByLabel("User Full Name").FillAsync("Jane Doe");
+        await page.GetByLabel("Email Address").FillAsync("jane.doe@example.gov.uk");
+    }
+
+    [When("I click to start")]
+    public async Task WhenIClickToStart()
+    {
+        await page.GetByTestId("start").ClickAsync();
+    }
+
+    [When("I click the sign in button")]
+    public async Task WhenIClickTheLogInButton()
+    {
+        await page.GetByTestId("sign-in").ClickAsync();
     }
 
     [When("I log in")]
@@ -48,4 +60,11 @@ internal sealed class LoginSteps(IPage page, TestSettings settings)
          await Expect(page.GetByText("Jane Doe")).ToBeVisibleAsync();
          await Expect(page.GetByRole(AriaRole.Button, new PageGetByRoleOptions { Name = "Dev Sign Out" })).ToBeVisibleAsync();
     }
+
+    [Then("I can see the sign in button")]
+    public async Task ThenICanSeeTheLogInButton()
+    {
+        await Expect(page.GetByTestId("sign-in")).ToBeVisibleAsync();
+    }
+
 }
