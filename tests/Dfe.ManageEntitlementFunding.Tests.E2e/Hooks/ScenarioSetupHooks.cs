@@ -1,0 +1,97 @@
+using Microsoft.Playwright;
+using Reqnroll;
+using Reqnroll.BoDi;
+using Xunit;
+
+namespace Dfe.ManageEntitlementFunding.Tests.E2e.Hooks;
+
+[Binding]
+internal sealed class ScenarioSetupHooks(
+    IObjectContainer objectContainer,
+    IReqnrollOutputHelper outputHelper,
+    FeatureContext featureContext,
+    ScenarioContext scenarioContext)
+{
+    [BeforeScenario(Order = 2)]
+    public void CheckLocationPage()
+    {
+        var settings = objectContainer.Resolve<TestSettings>();
+        var isLocationPage = scenarioContext.ScenarioInfo.Tags.Contains("RequiresLocationPage")
+            || featureContext.FeatureInfo.Tags.Contains("RequiresLocationPage");
+        if (settings.FlagSkipLocationEnabled && isLocationPage)
+        {
+            Assert.Skip("Location page is bypassed when FlagSkipLocation is enabled.");
+        }
+    }
+
+    [BeforeScenario(Order = 1)]
+    public async Task BeforeScenario()
+    {
+        var settings = objectContainer.Resolve<TestSettings>();
+        var browser = objectContainer.Resolve<IBrowser>();
+
+        var contextOptions = BrowserNewContextOptions(
+            settings,
+            featureContext.FeatureInfo.Title,
+            scenarioContext.ScenarioInfo.Title);
+
+        var browserContext = await browser.NewContextAsync(contextOptions);
+        browserContext.SetDefaultTimeout(5_000);
+        browserContext.SetDefaultNavigationTimeout(5_000);
+
+        var page = await browserContext.NewPageAsync();
+
+        page.Response += (_, response) =>
+        {
+            outputHelper.WriteLine($"[{featureContext.FeatureInfo.Title}] [{scenarioContext.ScenarioInfo.Title}] [{response.Status}] {response.Url}");
+        };
+
+        objectContainer.RegisterInstanceAs(browserContext);
+        objectContainer.RegisterInstanceAs(page);
+    }
+
+    [AfterScenario]
+    public async Task AfterScenario()
+    {
+        var browserContext = objectContainer.Resolve<IBrowserContext>();
+        if (browserContext != null)
+        {
+            await browserContext.CloseAsync();
+        }
+    }
+
+    private BrowserNewContextOptions BrowserNewContextOptions(
+        TestSettings settings,
+        string featureTitle,
+        string scenarioTitle)
+    {
+        var javascriptEnabled = scenarioContext
+            .ScenarioInfo
+            .Tags
+            .Contains("javascript-enabled");
+
+        return new BrowserNewContextOptions
+        {
+            JavaScriptEnabled = javascriptEnabled,
+            UserAgent = $"{settings.UserAgent}, {featureTitle}, {scenarioTitle}",
+            BaseURL = settings.TestUrl,
+            ExtraHTTPHeaders = ExtraHttpHeaders(settings)
+        };
+    }
+
+    private static Dictionary<string, string>? ExtraHttpHeaders(TestSettings settings)
+    {
+        if (string.IsNullOrEmpty(settings.BasicAuthPassword))
+        {
+            return null;
+        }
+
+        var credentials = $"e2e:{settings.BasicAuthPassword}";
+        var encoded = Convert.ToBase64String(System.Text.Encoding.UTF8.GetBytes(credentials));
+
+        return new Dictionary<string, string>
+        {
+            { "Authorization", $"Basic {encoded}" }
+        };
+    }
+}

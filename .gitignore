@@ -116,9 +116,6 @@ ipch/
 *.vspx
 *.sap
 
-# Visual Studio Trace Files
-*.e2e
-
 # TFS 2012 Local Workspace
 $tf/
 
@@ -171,6 +168,9 @@ DocProject/Help/html
 
 # Click-Once directory
 publish/
+
+# Build outputs
+*.feature.cs
 
 # Publish Web Output
 *.[Pp]ublish.xml
