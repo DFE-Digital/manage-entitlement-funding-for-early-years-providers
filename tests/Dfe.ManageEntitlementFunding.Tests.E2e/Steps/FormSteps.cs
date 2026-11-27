@@ -16,20 +16,20 @@ internal sealed class FormSteps(IPage page, TestSettings settings)
     [When("I click the {string} button")]
     public async Task WhenIClickTheStringButton(string buttonText)
     {
-        await page.GetByRole(AriaRole.Button, new PageGetByRoleOptions { Name = buttonText}).ClickAsync();
+        await page.GetByRole(AriaRole.Button, new PageGetByRoleOptions { Name = buttonText }).ClickAsync();
     }
 
     [When("I click the {string} link")]
     public async Task WhenIClickTheStringLink(string linkText)
     {
-        await page.GetByRole(AriaRole.Link, new PageGetByRoleOptions { Name = linkText}).ClickAsync();
+        await page.GetByRole(AriaRole.Link, new PageGetByRoleOptions { Name = linkText }).ClickAsync();
     }
 
     [Then("I can see the {string} button")]
     public async Task ThenICanSeeTheStringButton(string buttonText)
     {
         await Expect(
-            page.GetByRole(AriaRole.Button,new PageGetByRoleOptions { Name = buttonText })
+            page.GetByRole(AriaRole.Button, new PageGetByRoleOptions { Name = buttonText })
         ).ToBeVisibleAsync();
     }
 

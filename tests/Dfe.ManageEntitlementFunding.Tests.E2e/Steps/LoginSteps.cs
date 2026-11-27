@@ -31,9 +31,9 @@ internal sealed class LoginSteps(IPage page, TestSettings settings)
     [When("I log in")]
     public async Task WhenILogIn()
     {
-        await page.GetByRole(AriaRole.Button, new PageGetByRoleOptions { Name = "Start now"}).ClickAsync();
+        await page.GetByRole(AriaRole.Button, new PageGetByRoleOptions { Name = "Start now" }).ClickAsync();
         await WhenIEnterTheDeveloperLogInDetails();
-        await page.GetByRole(AriaRole.Button, new PageGetByRoleOptions { Name = "Sign in with test identity"}).ClickAsync();
+        await page.GetByRole(AriaRole.Button, new PageGetByRoleOptions { Name = "Sign in with test identity" }).ClickAsync();
     }
 
     [Then("I can see the log in fields")]
@@ -48,7 +48,7 @@ internal sealed class LoginSteps(IPage page, TestSettings settings)
         foreach (var field in fields)
         {
             await Expect(
-                page.GetByRole(AriaRole.Textbox,new PageGetByRoleOptions { Name = field })
+                page.GetByRole(AriaRole.Textbox, new PageGetByRoleOptions { Name = field })
             ).ToBeVisibleAsync();
         }
     }
@@ -56,9 +56,9 @@ internal sealed class LoginSteps(IPage page, TestSettings settings)
     [Then("I am signed in as the developer user")]
     public async Task ThenIAmSignedInAsTheDeveloperUser()
     {
-         await Expect(page.GetByText("DEV SESSION:")).ToBeVisibleAsync();
-         await Expect(page.GetByText("Jane Doe")).ToBeVisibleAsync();
-         await Expect(page.GetByRole(AriaRole.Button, new PageGetByRoleOptions { Name = "Dev Sign Out" })).ToBeVisibleAsync();
+        await Expect(page.GetByText("DEV SESSION:")).ToBeVisibleAsync();
+        await Expect(page.GetByText("Jane Doe")).ToBeVisibleAsync();
+        await Expect(page.GetByRole(AriaRole.Button, new PageGetByRoleOptions { Name = "Dev Sign Out" })).ToBeVisibleAsync();
     }
 
     [Then("I can see the sign in button")]
