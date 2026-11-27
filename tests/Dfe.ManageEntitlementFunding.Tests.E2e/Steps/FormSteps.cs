@@ -19,6 +19,12 @@ internal sealed class FormSteps(IPage page, TestSettings settings)
         await page.GetByRole(AriaRole.Button, new PageGetByRoleOptions { Name = buttonText}).ClickAsync();
     }
 
+    [When("I click the {string} link")]
+    public async Task WhenIClickTheStringLink(string linkText)
+    {
+        await page.GetByRole(AriaRole.Link, new PageGetByRoleOptions { Name = linkText}).ClickAsync();
+    }
+
     [Then("I can see the {string} button")]
     public async Task ThenICanSeeTheStringButton(string buttonText)
     {
@@ -31,5 +37,11 @@ internal sealed class FormSteps(IPage page, TestSettings settings)
     public async Task ThenThePageTitleIsString(string text)
     {
         await Expect(page).ToHaveTitleAsync(text);
+    }
+
+    [Then("I see the homepage")]
+    public async Task ThenISeeTheHomepage()
+    {
+        await Expect(page).ToHaveURLAsync("/");
     }
 }
